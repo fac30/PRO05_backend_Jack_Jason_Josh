@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/Users/jack/founders-and-coders/projects/JJJ-project/PRO05_backend_Jack_Jason_Josh/PRO05_backend_Jack_Jason_Josh.csproj": {}
+    "/Users/jasonwarren/Code/FAC/Projects/05 Colour Library/Backend/PRO05_backend_Jack_Jason_Josh.csproj": {}
   },
   "projects": {
-    "/Users/jack/founders-and-coders/projects/JJJ-project/PRO05_backend_Jack_Jason_Josh/PRO05_backend_Jack_Jason_Josh.csproj": {
+    "/Users/jasonwarren/Code/FAC/Projects/05 Colour Library/Backend/PRO05_backend_Jack_Jason_Josh.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/jack/founders-and-coders/projects/JJJ-project/PRO05_backend_Jack_Jason_Josh/PRO05_backend_Jack_Jason_Josh.csproj",
+        "projectUniqueName": "/Users/jasonwarren/Code/FAC/Projects/05 Colour Library/Backend/PRO05_backend_Jack_Jason_Josh.csproj",
         "projectName": "PRO05_backend_Jack_Jason_Josh",
-        "projectPath": "/Users/jack/founders-and-coders/projects/JJJ-project/PRO05_backend_Jack_Jason_Josh/PRO05_backend_Jack_Jason_Josh.csproj",
-        "packagesPath": "/Users/jack/.nuget/packages/",
-        "outputPath": "/Users/jack/founders-and-coders/projects/JJJ-project/PRO05_backend_Jack_Jason_Josh/obj/",
+        "projectPath": "/Users/jasonwarren/Code/FAC/Projects/05 Colour Library/Backend/PRO05_backend_Jack_Jason_Josh.csproj",
+        "packagesPath": "/Users/jasonwarren/.nuget/packages/",
+        "outputPath": "/Users/jasonwarren/Code/FAC/Projects/05 Colour Library/Backend/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/jack/.nuget/NuGet/NuGet.Config"
+          "/Users/jasonwarren/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
