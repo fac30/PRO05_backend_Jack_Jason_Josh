@@ -3,5 +3,8 @@
   "conventionalCommits.scopes": [
     "routes",
     "Database"
-  ]
+  ],
+  "editor.defaultFormatter": "csharpier.csharpier-vscode",
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true
 }
