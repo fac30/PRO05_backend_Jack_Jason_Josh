@@ -2,13 +2,13 @@ using System.ComponentModel;
 
 namespace j3.models;
 
-class Colour
+public class Colour
 {
     public int Id { get; set; }
     public required string Hex { get; set; }
 }
 
-class User
+public class User
 {
     public int Id { get; set; }
     public required string requiredName { get; set; }
@@ -16,23 +16,33 @@ class User
     public required string Hash { get; set; }
 }
 
-class Comment
+public class Comment
 {
     public int Id { get; set; }
     public required string User { get; set; }
     public required string Collection { get; set; }
 }
 
-class Collection
+public class Collection
 {
     public int Id { get; set; }
     public int UserId { get; set; }
     public required string Name { get; set; }
 }
 
-class ColourCollection
+public class ColourCollection
 {
     public int Id { get; set; }
     public required string Colour { get; set; }
     public required string Collection { get; set; }
+}
+
+public class ColourData
+{
+    public List<Colour> Rows { get; set; }
+
+    public ColourData()
+    {
+        Rows = new List<Colour>();
+    }
 }
