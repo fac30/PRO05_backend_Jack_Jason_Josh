@@ -1,6 +1,7 @@
 {
   "workbench.colorCustomizations": {},
   "conventionalCommits.scopes": [
-    "routes"
+    "routes",
+    "Database"
   ]
 }
