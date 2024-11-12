@@ -1,10 +1,22 @@
 {
   "rows": [
     {
-      "id": 0,
-      "name": "",
-      "email": "",
-      "hash": ""
+      "id": 1,
+      "name": "MapTapAJack",
+      "email": "jack@floop.com",
+      "hash": "aSampleHash1"
+    },
+    {
+      "id": 2,
+      "name": "RabbitHoleBoy",
+      "email": "jason@caffeine.com",
+      "hash": "aSampleHash2"
+    },
+    {
+      "id": 3,
+      "name": "LongSuffering",
+      "email": "josh@tolerant.com",
+      "hash": "aSampleHash3"
     }
   ]
 }
