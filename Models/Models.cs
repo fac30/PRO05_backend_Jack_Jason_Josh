@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace j3.models;
+namespace J3.Models;
 
 public class Colour
 {
