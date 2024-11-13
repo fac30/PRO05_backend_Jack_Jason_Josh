@@ -14,16 +14,7 @@ namespace J3.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Collection> Collections { get; set; }
         public DbSet<ColourCollection> ColourCollections { get; set; }
-        public DbSet<Comment> Comments { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(@"Server=DVT-CHANGEMENOW\SQLEXPRESS;Database=ColourBase;TrustServerCertificate=True;Trusted_Connection=True;"); //todo What???
-        }
-        
-        Server= servername //todo What???
-        DataBase= databasename //todo What???
-       
+        public DbSet<Comment> Comments { get; set; }       
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

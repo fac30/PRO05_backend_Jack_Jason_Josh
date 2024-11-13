@@ -152,6 +152,7 @@ After creating a migration, it must be applied in the database
 ```zsh
 update-database
 ```
+
 For the first migration, it will actually first create the database, then create SQL based on the migration and apply it.
 
 You can now see the database in SSMS
