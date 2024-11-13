@@ -17,9 +17,11 @@ public static class UserRoutes
       return Results.Ok($"User {id}");
     });
 
-    app.MapPost("/users", (User user, ApplicationDbContext context) =>
+    app.MapPost("/users", async (User newUser, ApplicationDbContext context) =>
     {
-      return Results.Ok(newUser);
+      context.Users.Add(newUser);
+      await context.SaveChangesAsync();
+      return Results.Created($"/users/{newUser.Id}", newUser);
     });
   }
 }
