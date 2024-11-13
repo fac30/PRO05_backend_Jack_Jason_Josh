@@ -2,17 +2,15 @@ using System.ComponentModel;
 
 namespace J3.Models;
 
-// todo Id: default & autoincrement
 public class Colour
 {
-    public int Id { get; set; }
+    public int Id { get; set; } //todo default, autoincrement
     public required string Hex { get; set; }
 }
 
-// todo Id: default & autoincrement
 public class User
 {
-    public int Id { get; set; }
+    public int Id { get; set; } //todo default, autoincrement
     public required string Name { get; set; }
     public required string Email { get; set; }
     public required string Hash { get; set; }
@@ -20,42 +18,31 @@ public class User
         public DateTime CreatedAt { get; set; }
 }
 
-// todo Id: default & autoincrement
-// todo Type: default Favourites
-// todo IsPublic: default False
-// todo UserId: FK
 public class Collection
 {
-    public int Id { get; set; }
-    public required string Type { get; set; }
-    public required bool IsPublic { get; set; }
-    public required int UserId { get; set; }
+    public int Id { get; set; } //todo default, autoincrement
+    public required string Type { get; set; } //todo default Favourites
+    public required bool IsPublic { get; set; } //todo default False
+    public required int UserId { get; set; } //todo FK
     public required string Name { get; set; }
     public string Description { get; set; }
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime CreatedAt { get; set; }
 }
 
-// todo Id: default & autoincrement
-// todo ColourId: FK Colour
-// todo CollectionId: FK Collection
-// todo Order: Default 0/1
 public class ColourCollection
 {
-    public int Id { get; set; }
-    public required string ColourId { get; set; }
-    public required string CollectionId { get; set; }
-    public required int Order { get; set; }
+    public int Id { get; set; } //todo default, autoincrement
+    public required string ColourId { get; set; } //todo FK
+    public required string CollectionId { get; set; } //todo FK
+    public required int Order { get; set; } //todo Default 0/1
 }
 
-// todo Id: default & autoincrement
-// todo UserId: FK User
-// todo Collection Id: FK Collection
 public class Comment
 {
-    public int Id { get; set; }
-    public required int UserId { get; set; }
-    public required string CollectionId { get; set; }
+    public int Id { get; set; } //todo default, autoincrement
+    public required int UserId { get; set; } //todo FK
+    public required string CollectionId { get; set; }//todo FK
     public required string Content { get; set; }
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime CreatedAt { get; set; }
