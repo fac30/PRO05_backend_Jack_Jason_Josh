@@ -30,3 +30,20 @@ namespace j3.Data
         }
     }
 }
+
+/* Fluent API
+  Notes for when I implement this later
+  
+  public class ApplicationDbContext : DbContext
+  {
+      // ... other context code ...
+  
+      protected override void OnModelCreating(ModelBuilder modelBuilder)
+      {
+          modelBuilder.Entity<User>()
+              .Property(u => u.CreatedAt)
+              .HasDefaultValueSql("CURRENT_TIMESTAMP");
+              
+          // ... other configurations ...
+      }
+  } */
