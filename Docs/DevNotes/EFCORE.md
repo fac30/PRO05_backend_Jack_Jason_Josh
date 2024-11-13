@@ -117,11 +117,12 @@ public class Book
 
 #### 5. Entity Framework Core Packages Explained
 
-```csharp
-Microsoft.EntityFrameworkCore.SqlServer: Your main package to create the context and work with EF Core (already includes microsoft.entityframeworkcore package)
-Microsoft.EntityFrameworkCore.Tools: gives us the ability to use the dotnet ef command line tool + includes microsoft.entityframeworkcore.design package
-Microsoft.EntityFrameworkCore.Design: for the Web project (the starting project)
-```
+- Microsoft.EntityFrameworkCore.SqlServer
+  - Your main package to create the context and work with EF Core (already includes microsoft.entityframeworkcore package)
+- Microsoft.EntityFrameworkCore.Tools
+  - Gives us the ability to use the dotnet ef command line tool + includes microsoft.entityframeworkcore.design package
+- Microsoft.EntityFrameworkCore.Design
+  - For the Web project (the starting project)
 
 #### 6. Entity Framework Core migration
 

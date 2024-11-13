@@ -1,19 +1,29 @@
 using Microsoft.EntityFrameworkCore;
+using J3.Models;
 
-namespace j3.Data
+namespace J3.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ColourContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        public ColourContext(DbContextOptions<ColourContext> options)
             : base(options)
         {
-        }
+        } //todo What's this?
 
+        public DbSet<Colour> Colours { get; set; }
+        public DbSet<User> Users { get; set; }
         public DbSet<Collection> Collections { get; set; }
         public DbSet<ColourCollection> ColourCollections { get; set; }
-        public DbSet<Colour> Colours { get; set; }
         public DbSet<Comment> Comments { get; set; }
-        public DbSet<User> Users { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer(@"Server=DVT-CHANGEMENOW\SQLEXPRESS;Database=ColourBase;TrustServerCertificate=True;Trusted_Connection=True;"); //todo What???
+        }
+        
+        Server= servername //todo What???
+        DataBase= databasename //todo What???
+       
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -25,7 +35,8 @@ namespace j3.Data
             modelBuilder.Entity<Comment>().ToTable("comment");
             modelBuilder.Entity<User>().ToTable("user");
 
-            modelBuilder.Entity<ColourCollection>()
+            modelBuilder
+                .Entity<ColourCollection>()
                 .HasKey(cc => new { cc.CollectionId, cc.ColourId });
         }
     }
