@@ -1,13 +1,12 @@
+using J3.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace j3.Data
+namespace J3.Data
 {
     public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
-        {
-        }
+            : base(options) { }
 
         public DbSet<Collection> Collections { get; set; }
         public DbSet<ColourCollection> ColourCollections { get; set; }
@@ -25,7 +24,8 @@ namespace j3.Data
             modelBuilder.Entity<Comment>().ToTable("comment");
             modelBuilder.Entity<User>().ToTable("user");
 
-            modelBuilder.Entity<ColourCollection>()
+            modelBuilder
+                .Entity<ColourCollection>()
                 .HasKey(cc => new { cc.CollectionId, cc.ColourId });
         }
     }
