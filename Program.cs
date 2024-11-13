@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using J3.Data;
 using J3.Routes;
 
 var builder = WebApplication.CreateBuilder(args);

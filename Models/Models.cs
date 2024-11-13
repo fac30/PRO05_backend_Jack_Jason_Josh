@@ -17,7 +17,7 @@ public class User
     public required string Email { get; set; }
     public required string Hash { get; set; }
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 }
 
 // todo Id: default & autoincrement
@@ -33,7 +33,7 @@ public class Collection
     public required string Name { get; set; }
     public string Description { get; set; }
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 }
 
 // todo Id: default & autoincrement
@@ -58,7 +58,7 @@ public class Comment
     public required string CollectionId { get; set; }
     public required string Content { get; set; }
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 }
 
 /* JSON Utility Classes
