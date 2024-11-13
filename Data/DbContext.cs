@@ -1,6 +1,7 @@
+using J3.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace j3.Data
+namespace J3.Data
 {
     public class ApplicationDbContext : DbContext
     {
