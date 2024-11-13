@@ -1,3 +1,4 @@
+using J3.Models;
 using Microsoft.EntityFrameworkCore;
 using J3.Models;
 
