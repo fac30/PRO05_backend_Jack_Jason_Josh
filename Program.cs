@@ -1,11 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using J3.Data;
 using J3.Routes;
+using J3.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+/* Default Connection
+  This line specifies where we pull the location, username & password of the PostgreSQL database from. */
+builder.Services.AddDbContext<ColourContext>(
+  options => options.UseNpgsql(
+    builder.Configuration.GetConnectionString("DefaultConnection")
+  )
+);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
