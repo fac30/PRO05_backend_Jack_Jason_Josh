@@ -9,7 +9,7 @@ namespace J3.Data
         public ColourContext(DbContextOptions<ColourContext> options)
             : base(options)
         {
-        } //todo What's this?
+        }
 
         public DbSet<Colour> Colours { get; set; }
         public DbSet<User> Users { get; set; }
@@ -33,20 +33,3 @@ namespace J3.Data
         }
     }
 }
-
-/* Fluent API
-  Notes for when I implement this later
-  
-  public class ApplicationDbContext : DbContext
-  {
-      // ... other context code ...
-  
-      protected override void OnModelCreating(ModelBuilder modelBuilder)
-      {
-          modelBuilder.Entity<User>()
-              .Property(u => u.CreatedAt)
-              .HasDefaultValueSql("CURRENT_TIMESTAMP");
-              
-          // ... other configurations ...
-      }
-  } */

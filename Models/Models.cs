@@ -36,31 +36,31 @@ public class User
     public required string Hash { get; set; }
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public DateTime? CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
 }
 
-public class Collection //todo x • •
+public class Collection
 {
     public int Id { get; set; }
-    public required string Type { get; set; } //todo def ""
-    public required bool IsPublic { get; set; } //todo def false
+    public required string Type { get; set; } = "";
+    public required bool IsPublic { get; set; } = false;
     public required int UserId { get; set; }
     public User? User { get; set; }
     public required string Name { get; set; }
     public string? Description { get; set; }
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public DateTime? CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
 }
 
-public class ColourCollection //todo x x •
+public class ColourCollection
 {
     public int Id { get; set; }
     public required int ColourId { get; set; }
     public Colour? Colour { get; set; }
     public required int CollectionId { get; set; }
     public Collection? Collection { get; set; }
-    public required int Order { get; set; } //todo Default 0/1
+    public required int Order { get; set; } = 0;
 }
 
 public class Comment
@@ -73,7 +73,7 @@ public class Comment
     public required int Content { get; set; }
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public DateTime? CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
 }
 
 // JSON Utility Classes
