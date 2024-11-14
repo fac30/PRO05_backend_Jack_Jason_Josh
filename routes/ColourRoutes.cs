@@ -1,7 +1,6 @@
-using Microsoft.EntityFrameworkCore;
-
-using J3.Models;
 using J3.Data;
+using J3.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace J3.Routes;
 
@@ -13,7 +12,7 @@ public static class ColourRoutes
         // GET /colours - Retrieves a list of all colours from the database
         app.MapGet(
             "/colours",
-            async (ApplicationDbContext context) =>
+            async (ColourContext context) =>
             {
                 // Asynchronously fetches all colours from the Colours table in the database
                 var colours = await context.Colours.ToListAsync();
@@ -26,7 +25,7 @@ public static class ColourRoutes
         // GET /colours/{id} - Retrieves a specific colour by its ID
         app.MapGet(
             "/colours/{id}",
-            async (int id, ApplicationDbContext context) =>
+            async (int id, ColourContext context) =>
             {
                 // Attempts to find the colour by its ID in the Colours table
                 var colour = await context.Colours.FindAsync(id);
@@ -46,7 +45,7 @@ public static class ColourRoutes
         app.MapPost(
             "/colours",
             // Model binding: ASP.NET Core automatically converts the incoming JSON data into an instance of the Colour class, based on matching property names.
-            async (Colour colour, ApplicationDbContext context) =>
+            async (Colour colour, ColourContext context) =>
             {
                 // Adds the new Colour object to the context (which tracks changes)
                 context.Colours.Add(colour);
