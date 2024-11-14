@@ -36,7 +36,7 @@ public class User
     public required string Hash { get; set; }
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public required DateTime CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
 }
 
 public class Collection //todo x • •
@@ -50,7 +50,7 @@ public class Collection //todo x • •
     public string? Description { get; set; }
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public DateTime CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
 }
 
 public class ColourCollection //todo x x •
@@ -63,7 +63,7 @@ public class ColourCollection //todo x x •
     public required int Order { get; set; } //todo Default 0/1
 }
 
-public class Comment //todo x x •
+public class Comment
 {
     public int Id { get; set; }
     public required int UserId { get; set; }
@@ -73,8 +73,7 @@ public class Comment //todo x x •
     public required int Content { get; set; }
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    //todo Data Annotation
-    public DateTime CreatedAt { get; set; }
+    public DateTime?] CreatedAt { get; set; }
 }
 
 // JSON Utility Classes
