@@ -73,7 +73,7 @@ public class Comment
     public required int Content { get; set; }
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public DateTime?] CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
 }
 
 // JSON Utility Classes
