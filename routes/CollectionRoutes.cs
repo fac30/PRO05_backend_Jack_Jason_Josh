@@ -1,5 +1,6 @@
 using J3.Data;
 using J3.Models;
+using J3.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace J3.Routes;
@@ -8,6 +9,8 @@ public static class CollectionRoutes
 {
     public static void MapCollectionRoutes(this WebApplication app)
     {
+        /* -------------- GET: All -------------- */
+
         app.MapGet("/collections",
             async (ColourContext context) =>
             {
@@ -20,7 +23,7 @@ public static class CollectionRoutes
             }
         ).WithTags("Collections");
 
-        /* ------------------------------------- */
+        /* -------------- GET: Some -------------- */
                 
         app.MapGet("/collections/public",
             async (ColourContext context) =>
@@ -61,7 +64,7 @@ public static class CollectionRoutes
             }
         ).WithTags("Collections");
         
-        /* ------------------------------------- */
+        /* -------------- GET: One -------------- */
                 
         app.MapGet("/collections/{id}",
             async (int id, ColourContext context) =>
@@ -87,29 +90,39 @@ public static class CollectionRoutes
             }
         ).WithTags("Collections");  
 
-        /* ------------------------------------- */
+        /* -------------- POST: One -------------- */
 
         app.MapPost("/collections",
-            async (Collection collection, ColourContext context) =>
+            async (CreateCollectionDTO dto, ColourContext context) =>
             {
                 // Check it's got a name
-                if (string.IsNullOrEmpty(collection.Name))
+                if (string.IsNullOrEmpty(dto.Name))
                 {
                     return Results.BadRequest("Collection name is required.");
                 }
 
                 // Make sure the type is valid
-                if (!new[] { "palette", "favourite" }.Contains(collection.Type))
+                if (!new[] { "palette", "favourite" }.Contains(dto.Type))
                 {
                     return Results.BadRequest("Collection type must be either 'palette' or 'favourite'.");
                 }
 
                 // Check the user exists
-                var user = await context.Users.FindAsync(collection.UserId);
+                var user = await context.Users.FindAsync(dto.UserId);
                 if (user == null)
                 {
-                    return Results.NotFound($"User with ID {collection.UserId} not found.");
+                    return Results.NotFound($"User with ID {dto.UserId} not found.");
                 }
+
+                // Create new collection from DTO
+                var collection = new Collection
+                {
+                    Name = dto.Name,
+                    Description = dto.Description,
+                    Type = dto.Type,
+                    IsPublic = dto.IsPublic,
+                    UserId = dto.UserId
+                };
 
                 // Add it & save it
                 context.Collections.Add(collection);
@@ -119,8 +132,5 @@ public static class CollectionRoutes
                 return Results.Created($"/collections/{collection.Id}", collection);
             }
         ).WithTags("Collections");
-        
-        /* ------------------------------------- */
-            
     }
 }
