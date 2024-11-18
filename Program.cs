@@ -1,5 +1,4 @@
 using J3.Data;
-using J3.Data;
 using J3.Routes;
 using Microsoft.EntityFrameworkCore;
 
