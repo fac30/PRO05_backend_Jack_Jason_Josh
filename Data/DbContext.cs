@@ -10,7 +10,8 @@ namespace J3.Data
             : base(options) { }
 
         public DbSet<Colour> Colours { get; set; }
-        public DbSet<User> Users { get; set; }
+
+        // public DbSet<User> Users { get; set; }
         public DbSet<Collection> Collections { get; set; }
         public DbSet<ColourCollection> ColourCollections { get; set; }
         public DbSet<Comment> Comments { get; set; }
@@ -25,7 +26,7 @@ namespace J3.Data
             modelBuilder.Entity<Comment>().ToTable("comment");
             modelBuilder.Entity<User>().ToTable("user");
 
-            modelBuilder.HasDefaultSchema("identity");
+            // modelBuilder.HasDefaultSchema("identity");
 
             modelBuilder
                 .Entity<ColourCollection>()
