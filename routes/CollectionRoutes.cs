@@ -9,7 +9,7 @@ public static class CollectionRoutes
 {
     public static void MapCollectionRoutes(this WebApplication app)
     {
-        /* -------------- GET: All -------------- */
+        /* -------------- GET -------------- */
 
         app.MapGet("/collections",
             async (ColourContext context) =>
@@ -22,8 +22,6 @@ public static class CollectionRoutes
                     .Ok(collections);
             }
         ).WithTags("Collections");
-
-        /* -------------- GET: Some -------------- */
                 
         app.MapGet("/collections/public",
             async (ColourContext context) =>
@@ -63,8 +61,6 @@ public static class CollectionRoutes
                     .Ok(collections);
             }
         ).WithTags("Collections");
-        
-        /* -------------- GET: One -------------- */
                 
         app.MapGet("/collections/{id}",
             async (int id, ColourContext context) =>
@@ -90,7 +86,7 @@ public static class CollectionRoutes
             }
         ).WithTags("Collections");  
 
-        /* -------------- POST: One -------------- */
+        /* -------------- POST -------------- */
 
         app.MapPost("/collections",
             async (CreateCollectionDTO dto, ColourContext context) =>
@@ -143,6 +139,78 @@ public static class CollectionRoutes
                 await context.SaveChangesAsync();
 
                 return Results.Created($"/collections/{collection.Id}", collection);
+            }
+        ).WithTags("Collections");
+
+        /* -------------- PUT -------------- */
+
+        app.MapPut("/collections/{id}/text",
+            async (int id, UpdateCollectionDTO dto, ColourContext context) =>
+            {
+                var collection = await context.Collections.FindAsync(id);
+                
+                if (collection == null)
+                {
+                    return Results.NotFound($"Collection with ID {id} not found.");
+                }
+
+                // Validate and update name if provided
+                if (dto.Name != null)
+                {
+                    if (string.IsNullOrEmpty(dto.Name.Trim()))
+                    {
+                        return Results.BadRequest("Collection name cannot be empty.");
+                    }
+                    collection.Name = dto.Name;
+                }
+
+                // Update description if provided (can be null)
+                if (dto.Description != null)
+                {
+                    collection.Description = dto.Description;
+                }
+
+                await context.SaveChangesAsync();
+                return Results.Ok(collection);
+            }
+        ).WithTags("Collections");
+
+        app.MapPut("/collections/{id}/privacy",
+            async (int id, ColourContext context) =>
+            {
+                var collection = await context.Collections.FindAsync(id);
+                
+                if (collection == null)
+                {
+                    return Results.NotFound($"Collection with ID {id} not found.");
+                }
+
+                collection.IsPublic = !collection.IsPublic;
+                await context.SaveChangesAsync();
+
+                return Results.Ok(collection);
+            }
+        ).WithTags("Collections");
+
+        app.MapPut("/collections/{id}/type",
+            async (int id, string type, ColourContext context) =>
+            {
+                var collection = await context.Collections.FindAsync(id);
+                
+                if (collection == null)
+                {
+                    return Results.NotFound($"Collection with ID {id} not found.");
+                }
+
+                if (!new[] { "palette", "favourite" }.Contains(type))
+                {
+                    return Results.BadRequest("Collection type must be either 'palette' or 'favourite'.");
+                }
+
+                collection.Type = type;
+                await context.SaveChangesAsync();
+
+                return Results.Ok(collection);
             }
         ).WithTags("Collections");
     }
