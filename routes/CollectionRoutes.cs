@@ -1,5 +1,6 @@
 using J3.Data;
 using J3.Models;
+using J3.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace J3.Routes;
@@ -8,6 +9,8 @@ public static class CollectionRoutes
 {
     public static void MapCollectionRoutes(this WebApplication app)
     {
+        /* -------------- GET: All -------------- */
+
         app.MapGet("/collections",
             async (ColourContext context) =>
             {
@@ -20,6 +23,8 @@ public static class CollectionRoutes
             }
         ).WithTags("Collections");
 
+        /* -------------- GET: Some -------------- */
+                
         app.MapGet("/collections/public",
             async (ColourContext context) =>
             {
@@ -59,6 +64,8 @@ public static class CollectionRoutes
             }
         ).WithTags("Collections");
         
+        /* -------------- GET: One -------------- */
+                
         app.MapGet("/collections/{id}",
             async (int id, ColourContext context) =>
             {
@@ -82,5 +89,61 @@ public static class CollectionRoutes
                     .Ok(collection);
             }
         ).WithTags("Collections");  
+
+        /* -------------- POST: One -------------- */
+
+        app.MapPost("/collections",
+            async (CreateCollectionDTO dto, ColourContext context) =>
+            {
+                var validationErrors = new List<string>();
+                
+                /* Check Name */ if (string.IsNullOrEmpty(dto.Name))
+                {
+                    validationErrors.Add("Collection name is required.");
+                }
+                
+                /* Check Type */ if (string.IsNullOrEmpty(dto.Type))
+                {
+                    validationErrors.Add("Collection type is required.");
+                }
+                else if (!new[] { "palette", "favourite" }.Contains(dto.Type))
+                {
+                    validationErrors.Add("Collection type must be either 'palette' or 'favourite'.");
+                }
+                
+                /* Check User */ if (dto.UserId == null)
+                {
+                    validationErrors.Add("User ID is required.");
+                }
+                else 
+                {
+                    // Check the user exists
+                    var user = await context.Users.FindAsync(dto.UserId);
+                    if (user == null)
+                    {
+                        validationErrors.Add($"User with ID {dto.UserId} not found.");
+                    }
+                }
+
+                /* Any Errors? */ if (validationErrors.Any())
+                {
+                    return Results.BadRequest(new { Errors = validationErrors });
+                }
+
+                var collection = new Collection
+                {
+                    Name = dto.Name!,
+                    Description = dto.Description,
+                    Type = dto.Type!,
+                    IsPublic = dto.IsPublic,
+                    UserId = dto.UserId!.Value
+                };
+
+                context.Collections.Add(collection);
+                await context.SaveChangesAsync();
+
+                return Results.Created($"/collections/{collection.Id}", collection);
+            }
+        ).WithTags("Collections");
     }
 }
