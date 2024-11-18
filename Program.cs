@@ -8,51 +8,63 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-/* Default Connection
-  This line specifies where we pull the location, username & password of the PostgreSQL database from. */
+// Database Context
 builder.Services.AddDbContext<ColourContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
-// Register the IColourContext interface to ColourContext implementation
 builder.Services.AddScoped<IColourContext, ColourContext>();
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Identity Configuration
 builder
     .Services.AddIdentityCore<User>()
     .AddEntityFrameworkStores<ColourContext>()
-    .AddApiEndpoints();
+    .AddApiEndpoints()
+    .AddDefaultTokenProviders(); // Add this line
 
-// CORS
+// Authentication Configuration (Single, Consolidated Setup)
+builder
+    .Services.AddAuthentication(options =>
+    {
+        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    })
+    .AddCookie(
+        IdentityConstants.ApplicationScheme,
+        options =>
+        {
+            options.LoginPath = "/Account/Login";
+            options.LogoutPath = "/Account/Logout";
+            options.Cookie.HttpOnly = true;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+        }
+    );
+
+// CORS Configuration
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
         "AllowFrontend",
         policy =>
         {
-            policy
-                .WithOrigins("http://localhost:5174") // Allow your frontend origin
-                .AllowAnyHeader() // Allow any headers
-                .AllowAnyMethod(); // Allow any HTTP method (GET, POST, etc.)
+            policy.WithOrigins("http://localhost:5174").AllowAnyHeader().AllowAnyMethod();
         }
     );
 });
 
-builder.Services.AddSingleton(TimeProvider.System); // Add TimeProvider
-builder.Services.AddAuthentication(options =>
-{
-    // Configure default authentication schemes
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-});
-builder.Services.AddDataProtection(); // Add Data Protection services
+builder.Services.AddDataProtection();
+builder.Services.AddSingleton(TimeProvider.System);
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-// Enable CORS middleware
 app.UseCors("AllowFrontend");
 
 if (app.Environment.IsDevelopment())
@@ -61,6 +73,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     app.ApplyMigrations();
 }
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapIdentityApi<User>();
 
