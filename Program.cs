@@ -1,35 +1,29 @@
 using J3.Data;
-using J3.Data;
 using J3.Routes;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-/* Default Connection
-  This line specifies where we pull the location, username & password of the PostgreSQL database from. */
-builder.Services.AddDbContext<ColourContext>(options =>
+builder.Services.AddDbContext<ColourContext>(options => 
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(
-        "AllowFrontend",
-        policy =>
+    options.AddPolicy("AllowFrontend", policy =>
         {
-            policy
-                .WithOrigins("http://localhost:5174") // Allow your frontend origin
-                .AllowAnyHeader() // Allow any headers
-                .AllowAnyMethod(); // Allow any HTTP method (GET, POST, etc.)
+            policy.WithOrigins("http://localhost:5174")
+                .AllowAnyHeader()
+                .AllowAnyMethod();
         }
     );
 });
 
 var app = builder.Build();
 
-// Enable CORS middleware
 app.UseCors("AllowFrontend");
 
 if (app.Environment.IsDevelopment())
@@ -38,7 +32,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("/", () => "Hello World!");
+app.MapGet("/", () => "very front end. much display");
 app.MapUserRoutes();
 app.MapColourRoutes();
 

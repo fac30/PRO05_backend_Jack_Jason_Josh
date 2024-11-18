@@ -1,12 +1,6 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 
-/* Data Annotations Schema
-    - This is required in order to use Data Annotations
-    - You can see one in User.CreatedAt
-    - [DatabaseGenerated()] is a Data Annotation
-*/
-
 namespace J3.Models;
 
 /* How This File Relates to DbContext
@@ -76,8 +70,7 @@ public class Comment
     public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
 }
 
-// JSON Utility Classes
-public class ColourData
+public class ColourData // JSON Utility Class
 {
     public List<Colour> Rows { get; set; }
 
