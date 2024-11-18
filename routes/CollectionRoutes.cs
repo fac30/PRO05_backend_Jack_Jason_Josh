@@ -20,6 +20,8 @@ public static class CollectionRoutes
             }
         ).WithTags("Collections");
 
+        /* ------------------------------------- */
+                
         app.MapGet("/collections/public",
             async (ColourContext context) =>
             {
@@ -59,6 +61,8 @@ public static class CollectionRoutes
             }
         ).WithTags("Collections");
         
+        /* ------------------------------------- */
+                
         app.MapGet("/collections/{id}",
             async (int id, ColourContext context) =>
             {
@@ -82,5 +86,41 @@ public static class CollectionRoutes
                     .Ok(collection);
             }
         ).WithTags("Collections");  
+
+        /* ------------------------------------- */
+
+        app.MapPost("/collections",
+            async (Collection collection, ColourContext context) =>
+            {
+                // Check it's got a name
+                if (string.IsNullOrEmpty(collection.Name))
+                {
+                    return Results.BadRequest("Collection name is required.");
+                }
+
+                // Make sure the type is valid
+                if (!new[] { "palette", "favourite" }.Contains(collection.Type))
+                {
+                    return Results.BadRequest("Collection type must be either 'palette' or 'favourite'.");
+                }
+
+                // Check the user exists
+                var user = await context.Users.FindAsync(collection.UserId);
+                if (user == null)
+                {
+                    return Results.NotFound($"User with ID {collection.UserId} not found.");
+                }
+
+                // Add it & save it
+                context.Collections.Add(collection);
+                await context.SaveChangesAsync();
+
+                // Return the new collection
+                return Results.Created($"/collections/{collection.Id}", collection);
+            }
+        ).WithTags("Collections");
+        
+        /* ------------------------------------- */
+            
     }
 }
