@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 
 /* Data Annotations Schema
     - This is required in order to use Data Annotations
@@ -28,12 +29,13 @@ public class Colour
     public required string Hex { get; set; }
 }
 
-public class User
+public class User : IdentityUser
 {
-    public int Id { get; set; }
-    public required string Name { get; set; }
-    public required string Email { get; set; }
-    public required string Hash { get; set; }
+    // public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+
+    // public string Email { get; set; } = string.Empty;
+    // public string Hash { get; set; } = string.Empty;
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;

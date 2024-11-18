@@ -1,10 +1,10 @@
 using J3.Models;
-using J3.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace J3.Data
 {
-    public class ColourContext : DbContext, IColourContext
+    public class ColourContext : IdentityDbContext<User>, IColourContext
     {
         public ColourContext(DbContextOptions<ColourContext> options)
             : base(options) { }
@@ -24,6 +24,8 @@ namespace J3.Data
             modelBuilder.Entity<Colour>().ToTable("colour");
             modelBuilder.Entity<Comment>().ToTable("comment");
             modelBuilder.Entity<User>().ToTable("user");
+
+            modelBuilder.HasDefaultSchema("identity");
 
             modelBuilder
                 .Entity<ColourCollection>()

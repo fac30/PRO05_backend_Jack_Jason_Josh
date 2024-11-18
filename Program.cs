@@ -1,5 +1,9 @@
 using J3.Data;
+using J3.Models;
 using J3.Routes;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +21,11 @@ builder.Services.AddScoped<IColourContext, ColourContext>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder
+    .Services.AddIdentityCore<User>()
+    .AddEntityFrameworkStores<ColourContext>()
+    .AddApiEndpoints();
+
 // CORS
 builder.Services.AddCors(options =>
 {
@@ -32,6 +41,15 @@ builder.Services.AddCors(options =>
     );
 });
 
+builder.Services.AddSingleton(TimeProvider.System); // Add TimeProvider
+builder.Services.AddAuthentication(options =>
+{
+    // Configure default authentication schemes
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+});
+builder.Services.AddDataProtection(); // Add Data Protection services
+
 var app = builder.Build();
 
 // Enable CORS middleware
@@ -41,7 +59,10 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.ApplyMigrations();
 }
+
+app.MapIdentityApi<User>();
 
 app.MapGet("/", () => "Hello World!");
 app.MapUserRoutes();
