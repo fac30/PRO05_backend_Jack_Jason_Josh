@@ -1,14 +1,14 @@
 using J3.Models;
+using J3.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace J3.Data;
 
-public class ColourContext : DbContext
+
+public class ColourContext : DbContext, IColourContext
 {
     public ColourContext(DbContextOptions<ColourContext> options)
-        : base(options)
-    {
-    }
+        : base(options) { }
 
     public DbSet<Colour> Colours { get; set; }
     public DbSet<User> Users { get; set; }
