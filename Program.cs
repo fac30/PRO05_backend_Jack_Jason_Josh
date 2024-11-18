@@ -9,9 +9,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ColourContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
+
+// Register the IColourContext interface to ColourContext implementation
+builder.Services.AddScoped<IColourContext, ColourContext>();
+
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
