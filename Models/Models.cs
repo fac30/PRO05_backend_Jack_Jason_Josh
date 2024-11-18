@@ -2,12 +2,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 
-/* Data Annotations Schema
-    - This is required in order to use Data Annotations
-    - You can see one in User.CreatedAt
-    - [DatabaseGenerated()] is a Data Annotation
-*/
-
 namespace J3.Models;
 
 /* How This File Relates to DbContext
@@ -40,10 +34,10 @@ public class Collection
     public int Id { get; set; }
     public required string Type { get; set; } = "";
     public required bool IsPublic { get; set; } = false;
-    public required int UserId { get; set; }
-    public User? User { get; set; }
     public required string Name { get; set; }
     public string? Description { get; set; }
+    public required int UserId { get; set; }
+    public User? User { get; set; }
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
@@ -72,8 +66,7 @@ public class Comment
     public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
 }
 
-// JSON Utility Classes
-public class ColourData
+public class ColourData // JSON Utility Class
 {
     public List<Colour> Rows { get; set; }
 
