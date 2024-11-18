@@ -14,7 +14,7 @@ public static class UserRoutes
                 var users = await context.Users.ToListAsync();
                 return Results.Ok(users);
             }
-        );
+        ).WithTags("Users");
 
         app.MapGet("/users/{id}",
             async (int id, ColourContext context) =>
@@ -31,7 +31,7 @@ public static class UserRoutes
                 // If the user is found, return the user in the response
                 return Results.Ok(user);
             }
-        );
+        ).WithTags("Users");
 
         app.MapPost("/users",
             async (User newUser, ColourContext context) =>
@@ -48,6 +48,6 @@ public static class UserRoutes
                     return Results.Problem($"An error occurred while creating the user: {ex}");
                 }
             }
-        );
+        ).WithTags("Users");
     }
 }

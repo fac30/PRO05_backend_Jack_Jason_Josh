@@ -15,7 +15,7 @@ public static class ColourRoutes
 
                 return Results.Ok(colours);
             }
-        );
+        ).WithTags("Colours");;
 
         app.MapGet("/colours/{id}",
             async (int id, ColourContext context) =>
@@ -29,7 +29,7 @@ public static class ColourRoutes
 
                 return Results.Ok(colour);
             }
-        );
+        ).WithTags("Colours");
 
         app.MapPost("/colours",
             async (Colour colour, ColourContext context) =>
@@ -40,6 +40,6 @@ public static class ColourRoutes
 
                 return Results.Created($"/colours/{colour.Id}", colour);
             }
-        );
+        ).WithTags("Colours");
     }
 }

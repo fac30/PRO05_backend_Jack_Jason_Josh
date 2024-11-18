@@ -59,6 +59,6 @@ public static class DevRoutes
 
                 return Results.Ok("Test collections seeded successfully");
             }
-        );        
+        ).WithTags("Dev");
     }
 }

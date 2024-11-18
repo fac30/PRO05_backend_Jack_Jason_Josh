@@ -18,7 +18,7 @@ public static class CollectionRoutes
                 return Results
                     .Ok(collections);
             }
-        );
+        ).WithTags("Collections");
 
         app.MapGet("/collections/public",
             async (ColourContext context) =>
@@ -31,7 +31,7 @@ public static class CollectionRoutes
                 return Results
                     .Ok(collections);
             }
-        );
+        ).WithTags("Collections");
         
         app.MapGet("/collections/favourite",
             async (ColourContext context) =>
@@ -44,7 +44,7 @@ public static class CollectionRoutes
                 return Results
                     .Ok(collections);
             }
-        );
+        ).WithTags("Collections");
                 
         app.MapGet("/collections/palette",
             async (ColourContext context) =>
@@ -57,7 +57,7 @@ public static class CollectionRoutes
                 return Results
                     .Ok(collections);
             }
-        );
+        ).WithTags("Collections");
         
         app.MapGet("/collections/{id}",
             async (int id, ColourContext context) =>
@@ -81,6 +81,6 @@ public static class CollectionRoutes
                 return Results
                     .Ok(collection);
             }
-        );  
+        ).WithTags("Collections");  
     }
 }
