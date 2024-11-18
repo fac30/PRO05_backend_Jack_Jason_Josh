@@ -1,60 +1,60 @@
-using J3.Data;
-using J3.Models;
-using Microsoft.EntityFrameworkCore;
+    using J3.Data;
+    using J3.Models;
+    using Microsoft.EntityFrameworkCore;
 
-namespace J3.Routes
-{
-    public static class UserRoutes
+    namespace J3.Routes
     {
-        public static void MapUserRoutes(this WebApplication app)
+        public static class UserRoutes
         {
-            // GET: /users - Retrieves all users
-            app.MapGet(
-                "/users",
-                async (ColourContext context) =>
-                {
-                    var users = await context.Users.ToListAsync();
-                    return Results.Ok(users);
-                }
-            );
-
-            // GET: /users/{id} - Retrieves a user by ID
-            app.MapGet(
-                "/users/{id}",
-                async (int id, ColourContext context) =>
-                {
-                    // Attempts to find the user by its ID in the Users table
-                    var user = await context.Users.FindAsync(id);
-
-                    // If the user is not found, return a 404 Not Found response
-                    if (user == null)
+            public static void MapUserRoutes(this WebApplication app)
+            {
+                // GET: /users - Retrieves all users
+                app.MapGet(
+                    "/users",
+                    async (ColourContext context) =>
                     {
-                        return Results.NotFound($"User with ID {id} not found.");
+                        var users = await context.Users.ToListAsync();
+                        return Results.Ok(users);
                     }
+                );
 
-                    // If the user is found, return the user in the response
-                    return Results.Ok(user);
-                }
-            );
+                // GET: /users/{id} - Retrieves a user by ID
+                app.MapGet(
+                    "/users/{id}",
+                    async (int id, ColourContext context) =>
+                    {
+                        // Attempts to find the user by its ID in the Users table
+                        var user = await context.Users.FindAsync(id);
 
-            // POST: /users - Creates a new user
-            app.MapPost(
-                "/users",
-                async (User newUser, ColourContext context) =>
-                {
-                    try
-                    {
-                        context.Users.Add(newUser);
-                        await context.SaveChangesAsync();
-                        return Results.Created($"/users/{newUser.Id}", newUser);
+                        // If the user is not found, return a 404 Not Found response
+                        if (user == null)
+                        {
+                            return Results.NotFound($"User with ID {id} not found.");
+                        }
+
+                        // If the user is found, return the user in the response
+                        return Results.Ok(user);
                     }
-                    catch (Exception ex)
+                );
+
+                // POST: /users - Creates a new user
+                app.MapPost(
+                    "/users",
+                    async (User newUser, ColourContext context) =>
                     {
-                        // Log the error if necessary
-                        return Results.Problem("An error occurred while creating the user.");
+                        try
+                        {
+                            context.Users.Add(newUser);
+                            await context.SaveChangesAsync();
+                            return Results.Created($"/users/{newUser.Id}", newUser);
+                        }
+                        catch (Exception ex)
+                        {
+                            // Log the error if necessary
+                            return Results.Problem("An error occurred while creating the user.");
+                        }
                     }
-                }
-            );
+                );
+            }
         }
     }
-}
