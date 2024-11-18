@@ -144,6 +144,37 @@ public static class CollectionRoutes
 
         /* -------------- PUT -------------- */
 
+        app.MapPut("/collections/{id}/text",
+            async (int id, UpdateCollectionDTO dto, ColourContext context) =>
+            {
+                var collection = await context.Collections.FindAsync(id);
+                
+                if (collection == null)
+                {
+                    return Results.NotFound($"Collection with ID {id} not found.");
+                }
+
+                // Validate and update name if provided
+                if (dto.Name != null)
+                {
+                    if (string.IsNullOrEmpty(dto.Name.Trim()))
+                    {
+                        return Results.BadRequest("Collection name cannot be empty.");
+                    }
+                    collection.Name = dto.Name;
+                }
+
+                // Update description if provided (can be null)
+                if (dto.Description != null)
+                {
+                    collection.Description = dto.Description;
+                }
+
+                await context.SaveChangesAsync();
+                return Results.Ok(collection);
+            }
+        ).WithTags("Collections");
+
         app.MapPut("/collections/{id}/privacy",
             async (int id, ColourContext context) =>
             {
@@ -155,6 +186,28 @@ public static class CollectionRoutes
                 }
 
                 collection.IsPublic = !collection.IsPublic;
+                await context.SaveChangesAsync();
+
+                return Results.Ok(collection);
+            }
+        ).WithTags("Collections");
+
+        app.MapPut("/collections/{id}/type",
+            async (int id, string type, ColourContext context) =>
+            {
+                var collection = await context.Collections.FindAsync(id);
+                
+                if (collection == null)
+                {
+                    return Results.NotFound($"Collection with ID {id} not found.");
+                }
+
+                if (!new[] { "palette", "favourite" }.Contains(type))
+                {
+                    return Results.BadRequest("Collection type must be either 'palette' or 'favourite'.");
+                }
+
+                collection.Type = type;
                 await context.SaveChangesAsync();
 
                 return Results.Ok(collection);
