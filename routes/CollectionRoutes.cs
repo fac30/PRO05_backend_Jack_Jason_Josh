@@ -95,40 +95,53 @@ public static class CollectionRoutes
         app.MapPost("/collections",
             async (CreateCollectionDTO dto, ColourContext context) =>
             {
-                // Check it's got a name
-                if (string.IsNullOrEmpty(dto.Name))
+                var validationErrors = new List<string>();
+                
+                /* Check Name */ if (string.IsNullOrEmpty(dto.Name))
                 {
-                    return Results.BadRequest("Collection name is required.");
+                    validationErrors.Add("Collection name is required.");
+                }
+                
+                /* Check Type */ if (string.IsNullOrEmpty(dto.Type))
+                {
+                    validationErrors.Add("Collection type is required.");
+                }
+                else if (!new[] { "palette", "favourite" }.Contains(dto.Type))
+                {
+                    validationErrors.Add("Collection type must be either 'palette' or 'favourite'.");
+                }
+                
+                /* Check User */ if (dto.UserId == null)
+                {
+                    validationErrors.Add("User ID is required.");
+                }
+                else 
+                {
+                    // Check the user exists
+                    var user = await context.Users.FindAsync(dto.UserId);
+                    if (user == null)
+                    {
+                        validationErrors.Add($"User with ID {dto.UserId} not found.");
+                    }
                 }
 
-                // Make sure the type is valid
-                if (!new[] { "palette", "favourite" }.Contains(dto.Type))
+                /* Any Errors? */ if (validationErrors.Any())
                 {
-                    return Results.BadRequest("Collection type must be either 'palette' or 'favourite'.");
+                    return Results.BadRequest(new { Errors = validationErrors });
                 }
 
-                // Check the user exists
-                var user = await context.Users.FindAsync(dto.UserId);
-                if (user == null)
-                {
-                    return Results.NotFound($"User with ID {dto.UserId} not found.");
-                }
-
-                // Create new collection from DTO
                 var collection = new Collection
                 {
-                    Name = dto.Name,
+                    Name = dto.Name!,
                     Description = dto.Description,
-                    Type = dto.Type,
+                    Type = dto.Type!,
                     IsPublic = dto.IsPublic,
-                    UserId = dto.UserId
+                    UserId = dto.UserId!.Value
                 };
 
-                // Add it & save it
                 context.Collections.Add(collection);
                 await context.SaveChangesAsync();
 
-                // Return the new collection
                 return Results.Created($"/collections/{collection.Id}", collection);
             }
         ).WithTags("Collections");
