@@ -4,8 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<ColourContext>(options => 
+builder.Services.AddDbContext<ColourContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+           .UseSnakeCaseNamingConvention()
 );
 
 // Register the IColourContext interface to ColourContext implementation
@@ -19,12 +20,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
-        {
-            policy.WithOrigins("http://localhost:5174")
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-        }
-    );
+    {
+        policy.WithOrigins("http://localhost:5174")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
 });
 
 var app = builder.Build();
