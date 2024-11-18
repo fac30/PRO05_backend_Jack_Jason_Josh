@@ -37,7 +37,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("/", () => "very front end. much display");
+app.MapGet("/", () => "very front end. much display").WithTags("");
 app.MapDevRoutes();
 app.MapUserRoutes();
 app.MapColourRoutes();
