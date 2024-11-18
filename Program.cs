@@ -38,6 +38,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapGet("/", () => "very front end. much display");
+app.MapDevRoutes();
 app.MapUserRoutes();
 app.MapColourRoutes();
 app.MapCollectionRoutes();

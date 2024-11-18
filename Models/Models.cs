@@ -38,10 +38,10 @@ public class Collection
     public int Id { get; set; }
     public required string Type { get; set; } = "";
     public required bool IsPublic { get; set; } = false;
-    public required int UserId { get; set; }
-    public User? User { get; set; }
     public required string Name { get; set; }
     public string? Description { get; set; }
+    public required int UserId { get; set; }
+    public User? User { get; set; }
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;

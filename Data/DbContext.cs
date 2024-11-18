@@ -1,5 +1,4 @@
 using J3.Models;
-using J3.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace J3.Data;

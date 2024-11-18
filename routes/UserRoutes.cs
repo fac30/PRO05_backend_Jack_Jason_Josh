@@ -45,7 +45,7 @@ public static class UserRoutes
                 catch (Exception ex)
                 {
                     // Log the error if necessary
-                    return Results.Problem("An error occurred while creating the user.");
+                    return Results.Problem($"An error occurred while creating the user: {ex}");
                 }
             }
         );

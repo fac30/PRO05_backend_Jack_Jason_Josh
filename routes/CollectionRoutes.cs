@@ -12,8 +12,7 @@ public static class CollectionRoutes
             async (ColourContext context) =>
             {
                 var collections = await context.Collections
-                    .Where(c => c.IsPublic)
-                    .Include(c => c.User) /* Preload the user data */
+                    .Include(c => c.User)
                     .ToListAsync();
 
                 return Results
@@ -21,6 +20,45 @@ public static class CollectionRoutes
             }
         );
 
+        app.MapGet("/collections/public",
+            async (ColourContext context) =>
+            {
+                var collections = await context.Collections
+                    .Where(c => c.IsPublic)
+                    .Include(c => c.User)
+                    .ToListAsync();
+
+                return Results
+                    .Ok(collections);
+            }
+        );
+        
+        app.MapGet("/collections/favourite",
+            async (ColourContext context) =>
+            {
+                var collections = await context.Collections
+                    .Where(c => c.Type == "favourite")
+                    .Include(c => c.User)
+                    .ToListAsync();
+
+                return Results
+                    .Ok(collections);
+            }
+        );
+                
+        app.MapGet("/collections/palette",
+            async (ColourContext context) =>
+            {
+                var collections = await context.Collections
+                    .Where(c => c.Type == "palette")
+                    .Include(c => c.User)
+                    .ToListAsync();
+
+                return Results
+                    .Ok(collections);
+            }
+        );
+        
         app.MapGet("/collections/{id}",
             async (int id, ColourContext context) =>
             {
@@ -43,6 +81,6 @@ public static class CollectionRoutes
                 return Results
                     .Ok(collection);
             }
-        );
+        );  
     }
 }
