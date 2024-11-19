@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 
 namespace J3.Models;
 
@@ -22,13 +23,8 @@ public class Colour
     public required string Hex { get; set; }
 }
 
-public class User
+public class User : IdentityUser
 {
-    public int Id { get; set; }
-    public required string Name { get; set; }
-    public required string Email { get; set; }
-    public required string Hash { get; set; }
-
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
 }
@@ -40,7 +36,7 @@ public class Collection
     public required bool IsPublic { get; set; } = false;
     public required string Name { get; set; }
     public string? Description { get; set; }
-    public required int UserId { get; set; }
+    public required string UserId { get; set; }
     public User? User { get; set; }
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
