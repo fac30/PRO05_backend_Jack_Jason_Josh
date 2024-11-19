@@ -2,6 +2,7 @@ using J3.Data;
 using J3.Models;
 using J3.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace J3.Routes;
 
@@ -110,30 +111,42 @@ public static class CollectionRoutes
         ).WithTags("Collections (Colours)");
         
         app.MapGet("/collections/user/{userId}",
-            async (string userId, ColourContext context) =>
+            async (string userId, HttpContext httpContext, ColourContext context) =>
             {
                 var user = await context.Users.FindAsync(userId);
                 if (user == null)
                 {
                     return Results.NotFound($"User with ID {userId} not found.");
                 }
-
-                var collections = await context.Collections
-                    .Where(c => c.UserId == userId)
+        
+                var currentUserId = httpContext.User
+                    .FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        
+                var query = context.Collections
+                    .Where(c => c.UserId == userId);
+        
+                if (currentUserId != userId)
+                {
+                    query = query.Where(c => c.IsPublic);
+                }
+        
+                var collections = await query
                     .Include(c => c.User)
                     .Include(c => c.ColourCollections)
                         .ThenInclude(cc => cc.Colour)
                     .OrderByDescending(c => c.CreatedAt)
                     .ToListAsync();
-
+        
                 if (!collections.Any())
                 {
-                    return Results.NotFound($"No collections found for user {userId}.");
+                    if (currentUserId != userId)
+                    {
+                        return Results.NotFound($"No public collections found for user {userId}.");
+                    }
+                    return Results.NotFound($"You have no collections.");
                 }
-                else
-                {
-                    return Results.Ok(collections);
-                }
+        
+                return Results.Ok(collections);
             }
         ).WithTags("Collections (User)");
 
