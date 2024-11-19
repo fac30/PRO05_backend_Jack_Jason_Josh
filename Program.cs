@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<ColourContext>(options => 
+builder.Services.AddDbContext<ColourContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
@@ -18,11 +18,11 @@ builder.Services.AddSwaggerGen();
 // CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend", policy =>
+    options.AddPolicy(
+        "AllowFrontend",
+        policy =>
         {
-            policy.WithOrigins("http://localhost:5174")
-                .AllowAnyHeader()
-                .AllowAnyMethod();
+            policy.WithOrigins("http://localhost:5174").AllowAnyHeader().AllowAnyMethod();
         }
     );
 });
