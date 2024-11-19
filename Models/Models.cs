@@ -36,7 +36,7 @@ public class Collection
     public required bool IsPublic { get; set; } = false;
     public required string Name { get; set; }
     public string? Description { get; set; }
-    public required int UserId { get; set; }
+    public required string UserId { get; set; }
     public User? User { get; set; }
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

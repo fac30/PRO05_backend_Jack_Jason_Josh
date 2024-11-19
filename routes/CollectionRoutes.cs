@@ -171,7 +171,7 @@ public static class CollectionRoutes
                         Description = dto.Description,
                         Type = dto.Type!,
                         IsPublic = dto.IsPublic,
-                        UserId = int.Parse(dto.UserId),
+                        UserId = dto.UserId,
                     };
 
                     context.Collections.Add(collection);
