@@ -20,29 +20,31 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Identity Configuration
-builder.Services.AddIdentityCore<User>()
-.AddEntityFrameworkStores<ColourContext>()
-.AddApiEndpoints()
-.AddDefaultTokenProviders();
+builder
+    .Services.AddIdentityCore<User>()
+    .AddEntityFrameworkStores<ColourContext>()
+    .AddApiEndpoints()
+    .AddDefaultTokenProviders();
 
 // Authentication Configuration (Single, Consolidated Setup)
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-})
-.AddCookie(
-    IdentityConstants.ApplicationScheme,
-    options =>
+builder
+    .Services.AddAuthentication(options =>
     {
-        options.LoginPath = "/Account/Login";
-        options.LogoutPath = "/Account/Logout";
-        options.Cookie.HttpOnly = true;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-    }
-);
+        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    })
+    .AddCookie(
+        IdentityConstants.ApplicationScheme,
+        options =>
+        {
+            options.LoginPath = "/Account/Login";
+            options.LogoutPath = "/Account/Logout";
+            options.Cookie.HttpOnly = true;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+        }
+    );
 
 // CORS Configuration
 builder.Services.AddCors(options =>
@@ -84,7 +86,18 @@ app.MapDevRoutes();
 app.MapUserRoutes();
 app.MapColourRoutes();
 app.MapCollectionRoutes();
-app.MapIdentityApi<User>()
-   .WithTags("Authentication");
+app.MapIdentityApi<User>().WithTags("Authentication");
+
+app.MapGet(
+        "/Account/IsLoggedIn",
+        (HttpContext httpContext) =>
+        {
+            // Check if the user is authenticated
+            var isLoggedIn = httpContext.User.Identity?.IsAuthenticated ?? false;
+
+            return Results.Ok(new { IsLoggedIn = isLoggedIn });
+        }
+    )
+    .WithTags("Authentication");
 
 app.Run();
