@@ -8,6 +8,8 @@ public static class ColourRoutes
 {
     public static void MapColourRoutes(this WebApplication app)
     {
+        /* -------------- GET -------------- */
+
         app.MapGet("/colours",
             async (ColourContext context) =>
             {
@@ -31,6 +33,8 @@ public static class ColourRoutes
             }
         ).WithTags("Colours");
 
+        /* -------------- POST -------------- */
+        
         app.MapPost("/colours",
             async (Colour colour, ColourContext context) =>
             {
