@@ -108,7 +108,7 @@ public static class CollectionRoutes
                 return Results.Ok(result);
             }
         ).WithTags("Collections (Colours)");
-
+        
         app.MapGet("/collections/user/{userId}",
             async (string userId, ColourContext context) =>
             {
@@ -136,18 +136,6 @@ public static class CollectionRoutes
                 }
             }
         ).WithTags("Collections (User)");
-        
-        /* Authenticated Collections by User
-            app.MapGet("collections/filter",
-                async (ColourContext context) =>
-                {
-                    var collections = await context.Collections
-                        .Where(c => c)
-                        .Include(c => c)
-                        .ToListAsync();
-                    return Results.Ok(collections);
-                }
-            ) */
 
         /* Filtered Collections
             app.MapGet("collections/filter",
