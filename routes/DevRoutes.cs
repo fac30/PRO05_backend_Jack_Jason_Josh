@@ -56,12 +56,23 @@
 //                         },
 //                     };
 
-//                     context.Collections.AddRange(collections);
+// Create test colours if none exist
+//                 if (!await context.Colours.AnyAsync())
+//                 {
+//                     var colours = new List<Colour>
+//                     {
+//                         new Colour { Hex = "#FF0000" },
+//                         new Colour { Hex = "#00FF00" },
+//                         new Colour { Hex = "#0000FF" },
+//                         new Colour { Hex = "#FFFF00" },
+//                         new Colour { Hex = "#FF00FF" }
+//                     };
+//                     context.Colours.AddRange(colours);
 //                     await context.SaveChangesAsync();
-
-//                     return Results.Ok("Test collections seeded successfully");
 //                 }
-//             )
-//             .WithTags("Dev");
+
+//                 return Results.Ok("Test collections seeded successfully");
+//             }
+//         ).WithTags("Dev");
 //     }
 // }
