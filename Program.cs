@@ -23,8 +23,11 @@ builder.Services.AddSwaggerGen();
 builder
     .Services.AddIdentityCore<User>()
     .AddEntityFrameworkStores<ColourContext>()
-    .AddApiEndpoints()
-    .AddDefaultTokenProviders(); // Add this line
+    .AddApiEndpoints(/* options => 
+    {
+        options.TagName = "";
+    } */)
+    .AddDefaultTokenProviders();
 
 // Authentication Configuration (Single, Consolidated Setup)
 builder

@@ -4,19 +4,6 @@ using Microsoft.AspNetCore.Identity;
 
 namespace J3.Models;
 
-/* How This File Relates to DbContext
-    - The database is created by combining this file with DbContext
-        - This file *defines* the...
-            - Name of a single entry in a Table (as Classes)
-            - Columns (as Properties within those Classes)
-        - DbContext will then *build* those table like so:
-            public DbSet<Colour> Colours { get; set; }
-            - Build a table • DbSet
-            - The table has these columns • <Colour>
-            - The table has this name • Colours
-    - EF Core automatically sets any numerical field called "Id" as the Primary Key
-*/
-
 public class Colour
 {
     public int Id { get; set; }
@@ -56,7 +43,7 @@ public class ColourCollection
 public class Comment
 {
     public int Id { get; set; }
-    public required int UserId { get; set; }
+    public required string UserId { get; set; }
     public User? User { get; set; }
     public required int CollectionId { get; set; }
     public Collection? Collection { get; set; }
