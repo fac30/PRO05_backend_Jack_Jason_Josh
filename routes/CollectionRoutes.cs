@@ -86,6 +86,39 @@ public static class CollectionRoutes
             }
         ).WithTags("Collections");  
 
+        app.MapGet("/collections/{id}/colours",
+            async (int id, ColourContext context) =>
+            {
+                var collection = await context.Collections
+                    .Include(c => c.User)
+                    .FirstOrDefaultAsync(c => c.Id == id);
+
+                if (collection == null)
+                {
+                    return Results.NotFound($"Collection with ID {id} not found.");
+                }
+
+                var colourCollections = await context.ColourCollections
+                    .Where(cc => cc.CollectionId == id)
+                    .Include(cc => cc.Colour)
+                    .OrderBy(cc => cc.Order)
+                    .ToListAsync();
+
+                var result = new
+                {
+                    Collection = collection,
+                    Colours = colourCollections.Select(cc => new
+                    {
+                        Id = cc.Colour!.Id,
+                        Hex = cc.Colour.Hex,
+                        Order = cc.Order
+                    })
+                };
+
+                return Results.Ok(result);
+            }
+        ).WithTags("Collections (Colours)");
+
         /* -------------- POST -------------- */
 
         app.MapPost("/collections",
@@ -141,6 +174,48 @@ public static class CollectionRoutes
                 return Results.Created($"/collections/{collection.Id}", collection);
             }
         ).WithTags("Collections");
+
+        app.MapPost("/collections/{id}/colours",
+            async (int id, AddColourToCollectionDTO dto, ColourContext context) =>
+            {
+                // Check collection exists
+                var collection = await context.Collections.FindAsync(id);
+                if (collection == null)
+                {
+                    return Results.NotFound($"Collection with ID {id} not found.");
+                }
+
+                // Check colour exists
+                var colour = await context.Colours.FindAsync(dto.ColourId);
+                if (colour == null)
+                {
+                    return Results.NotFound($"Colour with ID {dto.ColourId} not found.");
+                }
+
+                // Check if colour is already in collection
+                var existingEntry = await context.ColourCollections
+                    .FirstOrDefaultAsync(cc => 
+                        cc.CollectionId == id && 
+                        cc.ColourId == dto.ColourId);
+                
+                if (existingEntry != null)
+                {
+                    return Results.BadRequest($"Colour {dto.ColourId} is already in collection {id}.");
+                }
+
+                var colourCollection = new ColourCollection
+                {
+                    CollectionId = id,
+                    ColourId = dto.ColourId,
+                    Order = dto.Order
+                };
+
+                context.ColourCollections.Add(colourCollection);
+                await context.SaveChangesAsync();
+
+                return Results.Created($"/collections/{id}/colours", colourCollection);
+            }
+        ).WithTags("Collections (Colours)");
 
         /* -------------- PUT -------------- */
 
@@ -213,5 +288,133 @@ public static class CollectionRoutes
                 return Results.Ok(collection);
             }
         ).WithTags("Collections");
+
+        app.MapPut("/collections/{collectionId}/colours/{colourId}/order",
+            async (int collectionId, int colourId, int newOrder, ColourContext context) =>
+            {
+                // Get all colours in the collection to validate the new order
+                var collectionColours = await context.ColourCollections
+                    .Where(cc => cc.CollectionId == collectionId)
+                    .OrderBy(cc => cc.Order)
+                    .ToListAsync();
+
+                if (!collectionColours.Any())
+                {
+                    return Results.NotFound($"Collection {collectionId} has no colours.");
+                }
+
+                var maxOrder = collectionColours.Count - 1;
+                if (newOrder < 0 || newOrder > maxOrder)
+                {
+                    return Results.BadRequest($"Order must be between 0 and {maxOrder}.");
+                }
+
+                var colourToMove = collectionColours
+                    .FirstOrDefault(cc => cc.ColourId == colourId);
+
+                if (colourToMove == null)
+                {
+                    return Results.NotFound($"Colour {colourId} not found in collection {collectionId}.");
+                }
+
+                var oldOrder = colourToMove.Order;
+
+                // If moving to same position, no change needed
+                if (oldOrder == newOrder)
+                {
+                    return Results.Ok(colourToMove);
+                }
+
+                // Reorder colours between old and new positions
+                if (newOrder > oldOrder)
+                {
+                    // Moving down - shift others up
+                    foreach (var colour in collectionColours)
+                    {
+                        if (colour.Order > oldOrder && colour.Order <= newOrder)
+                        {
+                            colour.Order--;
+                        }
+                    }
+                }
+                else
+                {
+                    // Moving up - shift others down
+                    foreach (var colour in collectionColours)
+                    {
+                        if (colour.Order >= newOrder && colour.Order < oldOrder)
+                        {
+                            colour.Order++;
+                        }
+                    }
+                }
+
+                colourToMove.Order = newOrder;
+                await context.SaveChangesAsync();
+
+                return Results.Ok(colourToMove);
+            }
+        ).WithTags("Collections (Colours)");
+
+        /* -------------- DELETE -------------- */
+
+        app.MapDelete("/collections/{id}",
+            async (int id, ColourContext context) =>
+            {
+                var collection = await context.Collections
+                    .Include(c => c.User)
+                    .FirstOrDefaultAsync(c => c.Id == id);
+
+                if (collection == null)
+                {
+                    return Results.NotFound($"Collection with ID {id} not found.");
+                }
+
+                // Note: We don't need to explicitly delete ColourCollections or Comments
+                // because we set up CASCADE DELETE in our migrations
+                context.Collections.Remove(collection);
+                await context.SaveChangesAsync();
+
+                return Results.Ok($"Collection '{collection.Name}' and all associated data deleted.");
+            }
+        ).WithTags("Collections");
+                
+        app.MapDelete("/collections/{collectionId}/colours/{colourId}",
+            async (int collectionId, int colourId, ColourContext context) =>
+            {
+                var colourCollection = await context.ColourCollections
+                    .FirstOrDefaultAsync(cc => 
+                        cc.CollectionId == collectionId && 
+                        cc.ColourId == colourId);
+
+                if (colourCollection == null)
+                {
+                    return Results.NotFound($"Colour {colourId} not found in collection {collectionId}.");
+                }
+
+                // Get the order of the colour being removed
+                int removedOrder = colourCollection.Order;
+
+                // Remove the colour
+                context.ColourCollections.Remove(colourCollection);
+
+                // Get all colours with higher order values
+                var higherOrderColours = await context.ColourCollections
+                    .Where(cc => 
+                        cc.CollectionId == collectionId && 
+                        cc.Order > removedOrder)
+                    .ToListAsync();
+
+                // Decrease their order by 1
+                foreach (var colour in higherOrderColours)
+                {
+                    colour.Order--;
+                }
+
+                await context.SaveChangesAsync();
+
+                return Results.Ok();
+            }
+        ).WithTags("Collections (Colours)");
     }
 }
