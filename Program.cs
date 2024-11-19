@@ -8,12 +8,8 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-<<<<<<< HEAD
 // Database Context
 builder.Services.AddDbContext<ColourContext>(options =>
-=======
-builder.Services.AddDbContext<ColourContext>(options => 
->>>>>>> main
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
@@ -53,15 +49,11 @@ builder
 // CORS Configuration
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend", policy =>
+    options.AddPolicy(
+        "AllowFrontend",
+        policy =>
         {
-<<<<<<< HEAD
             policy.WithOrigins("http://localhost:5174").AllowAnyHeader().AllowAnyMethod();
-=======
-            policy.WithOrigins("http://localhost:5174")
-                .AllowAnyHeader()
-                .AllowAnyMethod();
->>>>>>> main
         }
     );
 });
@@ -82,17 +74,17 @@ if (app.Environment.IsDevelopment())
     app.ApplyMigrations();
 }
 
-<<<<<<< HEAD
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapIdentityApi<User>();
 
 app.MapGet("/", () => "Hello World!");
-=======
-app.MapGet("/", () => "very front end. much display").WithTags("");
-app.MapDevRoutes();
->>>>>>> main
+
+// app.MapGet("/", () => "very front end. much display").WithTags("");
+
+// app.MapDevRoutes();
+
 app.MapUserRoutes();
 app.MapColourRoutes();
 app.MapCollectionRoutes();
