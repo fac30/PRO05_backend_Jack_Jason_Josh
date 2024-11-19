@@ -23,11 +23,10 @@ public static class CollectionRoutes
         app.MapGet("/collections/public",
             async (ColourContext context) =>
             {
-                var collections = await context
-                    .Collections.Where(c => c.IsPublic)
+                var collections = await context.Collections
+                    .Where(c => c.IsPublic)
                     .Include(c => c.User)
                     .ToListAsync();
-
                 return Results.Ok(collections);
             }
         ).WithTags("Collections");
@@ -109,6 +108,58 @@ public static class CollectionRoutes
                 return Results.Ok(result);
             }
         ).WithTags("Collections (Colours)");
+
+        app.MapGet("/collections/user/{userId}",
+            async (string userId, ColourContext context) =>
+            {
+                var user = await context.Users.FindAsync(userId);
+                if (user == null)
+                {
+                    return Results.NotFound($"User with ID {userId} not found.");
+                }
+
+                var collections = await context.Collections
+                    .Where(c => c.UserId == userId)
+                    .Include(c => c.User)
+                    .Include(c => c.ColourCollections)
+                        .ThenInclude(cc => cc.Colour)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .ToListAsync();
+
+                if (!collections.Any())
+                {
+                    return Results.NotFound($"No collections found for user {userId}.");
+                }
+                else
+                {
+                    return Results.Ok(collections);
+                }
+            }
+        ).WithTags("Collections (User)");
+        
+        /* Authenticated Collections by User
+            app.MapGet("collections/filter",
+                async (ColourContext context) =>
+                {
+                    var collections = await context.Collections
+                        .Where(c => c)
+                        .Include(c => c)
+                        .ToListAsync();
+                    return Results.Ok(collections);
+                }
+            ) */
+
+        /* Filtered Collections
+            app.MapGet("collections/filter",
+                async (ColourContext context) =>
+                {
+                    var collections = await context.Collections
+                        .Where(c => c)
+                        .Include(c => c)
+                        .ToListAsync();
+                    return Results.Ok(collections);
+                }
+            ) */
 
         /* -------------- POST -------------- */
 
