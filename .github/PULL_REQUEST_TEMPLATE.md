@@ -1,3 +1,5 @@
+# HAVE YOU RUN `dotnet-csharpier .` BEFORE MAKING THE PR?
+
 ## Description
 
 Please include a summary of the change. Also, list any dependencies that are required for this change.
