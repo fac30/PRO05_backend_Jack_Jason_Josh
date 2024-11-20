@@ -3,6 +3,7 @@ using System;
 using J3.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace PRO05_backend_Jack_Jason_Josh.Migrations
 {
     [DbContext(typeof(ColourContext))]
-    partial class ColourContextModelSnapshot : ModelSnapshot
+    [Migration("20241120123240_AddNewPropertiesToColour")]
+    partial class AddNewPropertiesToColour
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
