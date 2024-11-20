@@ -25,6 +25,7 @@ public class Collection
     public string? Description { get; set; }
     public required string UserId { get; set; }
     public User? User { get; set; }
+    public ICollection<ColourCollection>? ColourCollections { get; set; }
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
