@@ -38,9 +38,8 @@ public static class ColourRoutes
         app.MapPost("/colours",
             async (Colour colour, ColourContext context) =>
             {
-                context.Colours.Add(colour); // Adds new Colour object to context
-
-                await context.SaveChangesAsync(); // Saves changes to database
+                context.Colours.Add(colour);
+                await context.SaveChangesAsync();
 
                 return Results.Created($"/colours/{colour.Id}", colour);
             }
