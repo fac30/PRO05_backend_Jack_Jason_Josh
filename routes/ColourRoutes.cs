@@ -10,8 +10,7 @@ public static class ColourRoutes
     {
         /* -------------- GET -------------- */
 
-        app.MapGet("/colours",
-            async (ColourContext context) =>
+        app.MapGet("/colours", async (ColourContext context) =>
             {
                 var colours = await context.Colours.ToListAsync();
 
