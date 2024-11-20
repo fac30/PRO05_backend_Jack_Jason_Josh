@@ -19,30 +19,8 @@ builder.Services.AddScoped<IColourContext, ColourContext>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Identity Configuration
-builder.Services.AddIdentityCore<User>()
-.AddEntityFrameworkStores<ColourContext>()
-.AddApiEndpoints()
-.AddDefaultTokenProviders();
-
-// Authentication Configuration (Single, Consolidated Setup)
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-})
-.AddCookie(
-    IdentityConstants.ApplicationScheme,
-    options =>
-    {
-        options.LoginPath = "/Account/Login";
-        options.LogoutPath = "/Account/Logout";
-        options.Cookie.HttpOnly = true;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-    }
-);
+// Identity Configuration (this includes authentication)
+builder.Services.AddIdentityApiEndpoints<User>().AddEntityFrameworkStores<ColourContext>();
 
 // CORS Configuration
 builder.Services.AddCors(options =>
@@ -51,20 +29,23 @@ builder.Services.AddCors(options =>
         "AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5174", "http://localhost:4173").AllowAnyHeader().AllowAnyMethod();
+            policy
+                .WithOrigins("http://localhost:6969")
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
         }
     );
 });
 
+// Other services
 builder.Services.AddDataProtection();
 builder.Services.AddSingleton(TimeProvider.System);
-
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-app.UseCors("AllowFrontend");
-
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -72,16 +53,21 @@ if (app.Environment.IsDevelopment())
     app.ApplyMigrations();
 }
 
+// Use CORS before authentication
+app.UseCors("AllowFrontend");
+
+// Authentication & Authorization
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet("/", () => "very front end. much display").WithTags("");
-
+// Map endpoints
+app.MapIdentityApi<User>().WithTags("Authentication");
+app.MapAuthRoutes();
 app.MapDevRoutes();
 app.MapUserRoutes();
 app.MapColourRoutes();
 app.MapCollectionRoutes();
-app.MapIdentityApi<User>()
-   .WithTags("Authentication");
+
+app.MapGet("/", () => "JJJ API is running!");
 
 app.Run();
