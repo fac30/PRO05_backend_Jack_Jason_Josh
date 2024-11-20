@@ -9,10 +9,11 @@ public static class UtilRoutes
 {
     public static void MapUtilRoutes(this WebApplication app)
     {
-        app.MapGet("/search/colourhex", (String hex) => {
+        app.MapGet("/search/colourhex", (String hex) => 
+        {
             try
             {
-                string name = Utilities.HexToName(hex);
+                string name = ColourSearch.HexToName(hex);
                 return Results.Ok(name);
             }
             catch (ArgumentException ex)
@@ -21,15 +22,17 @@ public static class UtilRoutes
             }
         }).WithTags("Utils");
 
-        app.MapGet("/search/colourname"), (String name) => {
+        app.MapGet("/search/colourname", (String name) =>
+        {
             try
             {
-                string[] hexArray =
+                string[] hexArray = ColourSearch.NameToHexArray(name);
+                return Results.Ok(new { hexCodes = hexArray });
             }
             catch (ArgumentException ex)
             {
-
+                return Results.BadRequest(ex.Message);
             }
-        })WithTags("Utils");
+        }).WithTags("Utils");
     }
 }
