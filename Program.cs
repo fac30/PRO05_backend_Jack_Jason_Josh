@@ -51,10 +51,14 @@ builder.Services.AddCors(options =>
         "AllowFrontend",
         policy =>
         {
+<<<<<<< HEAD
             policy
                 .WithOrigins("http://localhost:5174", "http://localhost:5173")
                 .AllowAnyHeader()
                 .AllowAnyMethod();
+=======
+            policy.WithOrigins("http://localhost:5174", "http://localhost:4173").AllowAnyHeader().AllowAnyMethod();
+>>>>>>> 233d6c08063334adbf35620ee66da800d08134fb
         }
     );
 });
