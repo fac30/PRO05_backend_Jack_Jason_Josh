@@ -1,3 +1,4 @@
+using J3.ColourExtensions;
 using J3.Data;
 using J3.Models;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +41,7 @@ public static class DevRoutes
 
         app.MapPost(
                 "/dev/colours/seed",
-                async (ColourContext context) =>
+                async (ColourContext context, ColourNameExtensions colourNameExtensions) =>
                 {
                     var colours = new List<Colour>();
                     var random = new Random();
@@ -103,7 +104,9 @@ public static class DevRoutes
                             (int)((b + m) * 255)
                         );
 
-                        colours.Add(new Colour { Hex = hex });
+                        string colourName = await colourNameExtensions.GetColorNameAsync(hex);
+
+                        colours.Add(new Colour { Hex = hex, ColourName = colourName });
                     }
 
                     await context.Colours.AddRangeAsync(colours);
