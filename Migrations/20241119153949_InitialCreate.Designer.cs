@@ -3,6 +3,7 @@ using System;
 using J3.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace PRO05_backend_Jack_Jason_Josh.Migrations
 {
     [DbContext(typeof(ColourContext))]
-    partial class ColourContextModelSnapshot : ModelSnapshot
+    [Migration("20241119153949_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,9 +69,6 @@ namespace PRO05_backend_Jack_Jason_Josh.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ColourName")
-                        .HasColumnType("text");
 
                     b.Property<string>("Hex")
                         .IsRequired()
@@ -345,7 +345,7 @@ namespace PRO05_backend_Jack_Jason_Josh.Migrations
             modelBuilder.Entity("J3.Models.ColourCollection", b =>
                 {
                     b.HasOne("J3.Models.Collection", "Collection")
-                        .WithMany("ColourCollections")
+                        .WithMany()
                         .HasForeignKey("CollectionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -429,11 +429,6 @@ namespace PRO05_backend_Jack_Jason_Josh.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("J3.Models.Collection", b =>
-                {
-                    b.Navigation("ColourCollections");
                 });
 #pragma warning restore 612, 618
         }
