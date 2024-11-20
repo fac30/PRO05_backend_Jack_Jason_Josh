@@ -8,6 +8,7 @@ public class Colour
 {
     public int Id { get; set; }
     public required string Hex { get; set; }
+    public string? colourName { get; set; }
 }
 
 public class User : IdentityUser

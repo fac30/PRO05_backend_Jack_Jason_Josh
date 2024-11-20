@@ -1,3 +1,4 @@
+using J3.ColourExtensions;
 using J3.Data;
 using J3.Models;
 using J3.Routes;
@@ -42,6 +43,8 @@ builder.Services.AddCors(options =>
 builder.Services.AddDataProtection();
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddAuthorization();
+
+builder.Services.AddHttpClient<ColourNameExtensions>();
 
 var app = builder.Build();
 
