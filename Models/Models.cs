@@ -36,7 +36,7 @@ public class ColourCollection
 {
     public int Id { get; set; }
     public required int CollectionId { get; set; }
-    public Collection? Collection { get; set; }
+
     public required int ColourId { get; set; }
     public Colour? Colour { get; set; }
     public required int Order { get; set; } = 0;
