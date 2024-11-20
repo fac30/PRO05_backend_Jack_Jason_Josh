@@ -18,9 +18,9 @@ public static class Utilities
     
         try
         {
-            int r = Convert.ToInt32(hex.Substring(..2), 16);
-            int g = Convert.ToInt32(hex.Substring(2..4), 16);
-            int b = Convert.ToInt32(hex.Substring(4..6), 16);
+            int r = Convert.ToInt32(hex.Substring(0, 2), 16);
+            int g = Convert.ToInt32(hex.Substring(2, 2), 16);
+            int b = Convert.ToInt32(hex.Substring(4, 2), 16);
             
             return (r, g, b);
         }
@@ -51,16 +51,17 @@ public static class Utilities
                 delta / (max + min) :
                 delta / (2.0 - max - min);
 
-            switch (max) {
-                case == rd:
-                    h = ((gd - bd) / delta) + (gd < bd ? 6 : 0);
-                    break;
-                case == gd:
-                    h = ((bd - rd) / delta) + 2;
-                    break;
-                default:
-                    h = ((rd - gd) / delta) + 4;
-                    break;
+            if (max == rd)
+            {
+                h = ((gd - bd) / delta) + (gd < bd ? 6 : 0);
+            }
+            else if (max == gd)
+            {
+                h = ((bd - rd) / delta) + 2;
+            }
+            else
+            {
+                h = ((rd - gd) / delta) + 4;
             }
             h /= 6;
         }
@@ -115,11 +116,14 @@ public static class Utilities
         return "";
     }
 
-    public static string CompareColours(int r, int g, int b)
+    public static string CompareColours(int r, int g, int b, string name)
     {
-        if (r > g && r > b) return "Reddish ";
-        if (g > r && g > b) return "Greenish ";
-        if (b > r && b > g) return "Bluish ";
+        if (name != "red" && r > g && r > b)
+            return "reddish ";
+        if (name != "green" && g > b && g > r)
+            return "greenish ";
+        if (name != "blue" && b > r && b > g)
+            return "blueish ";
         return "";
     }
 
@@ -127,10 +131,19 @@ public static class Utilities
     {
         var (r, g, b) = HexToRgb(hex);
         var (hue, saturation, lightness) = RgbToHsl(r, g, b);
-        string tint = PickColours(hue, saturation, lightness);
+        
+        string[] baseColors = PickColours(hue, saturation, lightness).Split('/');
+        
         string shade = CompareShade(saturation, lightness);
-        string ish = CompareColours(r, g, b);
-    
-        return $"{shade}{ish}{tint}";
+        
+        var modifiedColors = baseColors
+            .Select(color => {
+                string ish = CompareColours(r, g, b, color.ToLower());
+                
+                return $"{shade}{ish}{color.Trim()}";
+            })
+            .Where(c => !string.IsNullOrWhiteSpace(c));
+        
+        return string.Join(", ", modifiedColors);
     }
 }

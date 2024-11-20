@@ -77,10 +77,12 @@ app.UseAuthorization();
 
 app.MapGet("/", () => "very front end. much display").WithTags("");
 
-app.MapDevRoutes();
-app.MapUserRoutes();
 app.MapColourRoutes();
 app.MapCollectionRoutes();
+app.MapDevRoutes();
+app.MapUserRoutes();
+app.MapUtilRoutes();
+
 app.MapIdentityApi<User>()
    .WithTags("Authentication");
 
