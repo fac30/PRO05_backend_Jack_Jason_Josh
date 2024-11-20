@@ -63,14 +63,16 @@ app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Map endpoints
-app.MapIdentityApi<User>().WithTags("Authentication");
 app.MapAuthRoutes();
-app.MapDevRoutes();
-app.MapUserRoutes();
 app.MapColourRoutes();
 app.MapCollectionRoutes();
+app.MapDevRoutes();
+app.MapUserRoutes();
+app.MapUtilRoutes();
 
-app.MapGet("/", () => "JJJ API is running!");
+app.MapIdentityApi<User>()
+   .WithTags("Authentication");
+
+app.MapGet("/", () => "JJJ API is running!").WithTags("");
 
 app.Run();
