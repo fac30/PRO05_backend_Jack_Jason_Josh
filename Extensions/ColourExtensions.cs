@@ -2,13 +2,13 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace J3.ColorExtensions;
+namespace J3.ColourExtensions;
 
-public class ColorExtensions
+public class ColourNameExtensions
 {
     private readonly HttpClient _httpClient;
 
-    public ColorExtensions(HttpClient httpClient)
+    public ColourNameExtensions(HttpClient httpClient)
     {
         _httpClient = httpClient;
     }
