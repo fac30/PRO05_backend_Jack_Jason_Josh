@@ -56,7 +56,7 @@ public static class ColourRoutes
                     }
 
                     // Set the color name for the Colour object
-                    colour.colourName = colourName;
+                    colour.ColourName = colourName;
                     context.Colours.Add(colour);
                     await context.SaveChangesAsync();
 
