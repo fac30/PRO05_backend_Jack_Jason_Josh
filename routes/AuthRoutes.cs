@@ -1,5 +1,6 @@
 namespace J3.Routes;
 
+using System.Security.Claims;
 using J3.Models;
 using Microsoft.AspNetCore.Identity;
 
@@ -28,12 +29,15 @@ public static class AuthRoutes
                 (HttpContext context) =>
                 {
                     var identity = context.User.Identity;
+                    var currentUserId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
                     return Results.Ok(
                         new
                         {
                             IsAuthenticated = identity?.IsAuthenticated ?? false,
                             Username = identity?.Name,
                             AuthType = identity?.AuthenticationType,
+                            id = currentUserId,
                             Claims = context
                                 .User.Claims.Select(c => new { c.Type, c.Value })
                                 .ToList(),
