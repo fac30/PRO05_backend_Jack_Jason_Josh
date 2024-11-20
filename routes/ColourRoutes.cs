@@ -2,6 +2,7 @@ using System.Text.Json;
 using J3.ColourExtensions;
 using J3.Data;
 using J3.Models;
+using J3.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -44,9 +45,9 @@ public static class ColourRoutes
 
         app.MapPost(
                 "/colours",
-                async (Colour colour, ColourContext context, ColourNameExtensions getColourName) =>
+                async (CreateColourDTO dto, ColourContext context, ColourNameExtensions getColourName) =>
                 {
-                    var colourName = await getColourName.GetColorNameAsync(colour.Hex);
+                    var colourName = await getColourName.GetColorNameAsync(dto.Hex);
 
                     if (colourName == null)
                     {
@@ -56,11 +57,14 @@ public static class ColourRoutes
                     }
 
                     // Set the color name for the Colour object
-                    colour.ColourName = colourName;
+                    var colour = new Colour
+                    {
+                        Name = colourName,
+                        Hex = dto.Hex,
+                    };
+
                     context.Colours.Add(colour);
                     await context.SaveChangesAsync();
-
-                    await context.SaveChangesAsync(); // Saves changes to database
 
                     return Results.Created($"/colours/{colour.Id}", colour);
                 }
