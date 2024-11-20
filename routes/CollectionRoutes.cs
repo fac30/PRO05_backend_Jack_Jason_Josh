@@ -2,6 +2,7 @@ using J3.Data;
 using J3.Models;
 using J3.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace J3.Routes;
 
@@ -23,11 +24,10 @@ public static class CollectionRoutes
         app.MapGet("/collections/public",
             async (ColourContext context) =>
             {
-                var collections = await context
-                    .Collections.Where(c => c.IsPublic)
+                var collections = await context.Collections
+                    .Where(c => c.IsPublic)
                     .Include(c => c.User)
                     .ToListAsync();
-
                 return Results.Ok(collections);
             }
         ).WithTags("Collections");
@@ -109,6 +109,58 @@ public static class CollectionRoutes
                 return Results.Ok(result);
             }
         ).WithTags("Collections (Colours)");
+        
+        app.MapGet("/collections/user/{userId}",
+            async (string userId, HttpContext httpContext, ColourContext context) =>
+            {
+                var user = await context.Users.FindAsync(userId);
+                if (user == null)
+                {
+                    return Results.NotFound($"User with ID {userId} not found.");
+                }
+        
+                var currentUserId = httpContext.User
+                    .FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        
+                var query = context.Collections
+                    .Where(c => c.UserId == userId);
+        
+                if (currentUserId != userId)
+                {
+                    query = query.Where(c => c.IsPublic);
+                }
+        
+                var collections = await query
+                    .Include(c => c.User)
+                    .Include(c => c.ColourCollections)
+                        .ThenInclude(cc => cc.Colour)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .ToListAsync();
+        
+                if (!collections.Any())
+                {
+                    if (currentUserId != userId)
+                    {
+                        return Results.NotFound($"No public collections found for user {userId}.");
+                    }
+                    return Results.NotFound($"You have no collections.");
+                }
+        
+                return Results.Ok(collections);
+            }
+        ).WithTags("Collections (User)");
+
+        /* Filtered Collections
+            app.MapGet("collections/filter",
+                async (ColourContext context) =>
+                {
+                    var collections = await context.Collections
+                        .Where(c => c)
+                        .Include(c => c)
+                        .ToListAsync();
+                    return Results.Ok(collections);
+                }
+            ) */
 
         /* -------------- POST -------------- */
 
