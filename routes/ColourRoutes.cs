@@ -43,7 +43,8 @@ public static class ColourRoutes
                 "/colours",
                 async (Colour colour, ColourContext context) =>
                 {
-                    context.Colours.Add(colour); // Adds new Colour object to context
+                    context.Colours.Add(colour);
+                    await context.SaveChangesAsync();
 
                     await context.SaveChangesAsync(); // Saves changes to database
 
