@@ -10,48 +10,54 @@ public static class UserRoutes
     {
         /* -------------- GET -------------- */
 
-        app.MapGet("/users",
-            async (ColourContext context) =>
-            {
-                var users = await context.Users.ToListAsync();
-                return Results.Ok(users);
-            }
-        ).WithTags("Users");
-
-        app.MapGet("/users/{id}",
-            async (int id, ColourContext context) =>
-            {
-                // Attempts to find the user by its ID in the Users table
-                var user = await context.Users.FindAsync(id);
-
-                // If the user is not found, return a 404 Not Found response
-                if (user == null)
+        app.MapGet(
+                "/users",
+                async (ColourContext context) =>
                 {
-                    return Results.NotFound($"User with ID {id} not found.");
+                    var users = await context.Users.ToListAsync();
+                    return Results.Ok(users);
                 }
+            )
+            .WithTags("Users");
 
-                // If the user is found, return the user in the response
-                return Results.Ok(user);
-            }
-        ).WithTags("Users");
+        app.MapGet(
+                "/users/{id}",
+                async (string id, ColourContext context) =>
+                {
+                    // Attempts to find the user by its ID in the Users table
+                    var user = await context.Users.FindAsync(id);
+
+                    // If the user is not found, return a 404 Not Found response
+                    if (user == null)
+                    {
+                        return Results.NotFound($"User with ID {id} not found.");
+                    }
+
+                    // If the user is found, return the user in the response
+                    return Results.Ok(user);
+                }
+            )
+            .WithTags("Users");
 
         /* -------------- POST -------------- */
-        
-        app.MapPost("/users",
-            async (User newUser, ColourContext context) =>
-            {
-                try
+
+        app.MapPost(
+                "/users",
+                async (User newUser, ColourContext context) =>
                 {
-                    context.Users.Add(newUser);
-                    await context.SaveChangesAsync();
-                    return Results.Created($"/users/{newUser.Id}", newUser);
+                    try
+                    {
+                        context.Users.Add(newUser);
+                        await context.SaveChangesAsync();
+                        return Results.Created($"/users/{newUser.Id}", newUser);
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log the error if necessary
+                        return Results.Problem($"An error occurred while creating the user: {ex}");
+                    }
                 }
-                catch (Exception ex)
-                {
-                    // Log the error if necessary
-                    return Results.Problem($"An error occurred while creating the user: {ex}");
-                }
-            }
-        ).WithTags("Users");
+            )
+            .WithTags("Users");
     }
 }

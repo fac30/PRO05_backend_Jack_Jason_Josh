@@ -45,7 +45,11 @@ public static class ColourRoutes
 
         app.MapPost(
                 "/colours",
-                async (CreateColourDTO dto, ColourContext context, ColourNameExtensions getColourName) =>
+                async (
+                    CreateColourDTO dto,
+                    ColourContext context,
+                    ColourNameExtensions getColourName
+                ) =>
                 {
                     var colourName = await getColourName.GetColorNameAsync(dto.Hex);
 
@@ -57,11 +61,7 @@ public static class ColourRoutes
                     }
 
                     // Set the color name for the Colour object
-                    var colour = new Colour
-                    {
-                        ColourName = colourName,
-                        Hex = dto.Hex,
-                    };
+                    var colour = new Colour { ColourName = colourName, Hex = dto.Hex };
 
                     context.Colours.Add(colour);
                     await context.SaveChangesAsync();
