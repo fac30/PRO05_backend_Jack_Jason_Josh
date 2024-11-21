@@ -184,34 +184,23 @@ public static class ColourSearch
         
         string baseColor = parts[^1];
 
-        // Handle brown edge cases
-        if (baseColor == "brown")
+        // Handle indigo
+        if (baseColor == "indigo")
         {
-            baseColor = "orange";
-            var hasLight = parts.Take(parts.Length - 1).Contains("light");
-            var hasDark = parts.Take(parts.Length - 1).Contains("dark");
+            baseColor = "purple";
+            parts = parts.Take(parts.Length - 1).Append("dark").Append(baseColor).ToArray();
 
-            if (!hasLight && !hasDark)
-            {
-                parts = parts.Take(parts.Length - 1).Append("dark").Append(baseColor).ToArray();
-            }
-            else if (hasLight)
-            {
-                parts = parts.Take(parts.Length - 1)
-                    .Where(p => p != "light")
-                    .Append(baseColor)
-                    .ToArray();
-            }
-            else if (hasDark)
-            {
-                parts = parts.Take(parts.Length - 1)
-                    .Append("dark")
-                    .Append(baseColor)
-                    .ToArray();
-            }
         }
 
-        // Handle pink edge cases
+        // Handle violet
+        if (baseColor == "violet")
+        {
+            baseColor = "magenta";
+            parts = parts.Take(parts.Length - 1).Append("pale").Append(baseColor).ToArray();
+
+        }
+
+        // Handle pink
         if (baseColor == "pink")
         {
             baseColor = "red";
@@ -238,20 +227,49 @@ public static class ColourSearch
                 parts = parts.Take(parts.Length - 1).Append(baseColor).ToArray();
             }
         }
+        
+        // Handle brown
+        if (baseColor == "brown")
+        {
+            baseColor = "orange";
+            var hasLight = parts.Take(parts.Length - 1).Contains("light");
+            var hasDark = parts.Take(parts.Length - 1).Contains("dark");
+
+            if (!hasLight && !hasDark)
+            {
+                parts = parts.Take(parts.Length - 1).Append("dark").Append(baseColor).ToArray();
+            }
+            else if (hasLight)
+            {
+                parts = parts.Take(parts.Length - 1)
+                    .Where(p => p != "light")
+                    .Append(baseColor)
+                    .ToArray();
+            }
+            else if (hasDark)
+            {
+                parts = parts.Take(parts.Length - 1)
+                    .Append("dark")
+                    .Append(baseColor)
+                    .ToArray();
+            }
+        }
 
         var colorRange = GetColorRange(baseColor);
-        hue = (colorRange.Start + colorRange.End) / 2;
+        hue = colorRange.Start > colorRange.End
+            ? (colorRange.Start + (360 - colorRange.Start + colorRange.End) / 2) % 360
+            : (colorRange.Start + colorRange.End) / 2;
         
         foreach (string modifier in parts.Take(parts.Length - 1))
         {
             switch (modifier)
             {
                 case "light":
-                    lightness += 0.15;
+                    lightness += 0.1;
                     if (lightness == 1) lightness = 0.95;
                     break;
                 case "dark":
-                    lightness -= 0.15;
+                    lightness -= 0.1;
                     if (lightness == 0) lightness = 0.05;
                     break;
                 case "pale":
@@ -263,11 +281,44 @@ public static class ColourSearch
                 case "reddish":
                     hue = AdjustHueTowards(hue, 0);
                     break;
+                case "orangeish":
+                    hue = AdjustHueTowards(hue, 30);
+                    break;
+                case "yellowish":
+                    hue = AdjustHueTowards(hue, 60);
+                    break;
                 case "greenish":
                     hue = AdjustHueTowards(hue, 120);
                     break;
+                case "cyanish":
+                    hue = AdjustHueTowards(hue, 180);
+                    break;
                 case "blueish":
                     hue = AdjustHueTowards(hue, 240);
+                    break;
+                case "purpleish":
+                    hue = AdjustHueTowards(hue, 270);
+                    break;
+                case "magentaish":
+                    hue = AdjustHueTowards(hue, 330);
+                    break;
+                case "violetish":
+                    hue = AdjustHueTowards(hue, 330);
+                    lightness = Math.Min(1, lightness + 0.1);
+                    break;
+                case "brownish":
+                    hue = AdjustHueTowards(hue, 30);
+                    lightness = Math.Max(0, lightness - 0.1);
+                    saturation = Math.Min(1, saturation + 0.1);
+                    break;
+                case "pinkish":
+                    hue = AdjustHueTowards(hue, 0);
+                    lightness = Math.Min(1, lightness + 0.1);
+                    saturation = Math.Max(0, saturation - 0.1);
+                    break;
+                case "indigoish":
+                    hue = AdjustHueTowards(hue, 270);
+                    lightness = Math.Max(0, lightness - 0.1);
                     break;
             }
         }
