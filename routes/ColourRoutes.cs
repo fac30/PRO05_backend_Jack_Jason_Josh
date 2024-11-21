@@ -59,7 +59,7 @@ public static class ColourRoutes
                     // Set the color name for the Colour object
                     var colour = new Colour
                     {
-                        Name = colourName,
+                        ColourName = colourName,
                         Hex = dto.Hex,
                     };
 
