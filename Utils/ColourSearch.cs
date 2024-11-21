@@ -147,133 +147,250 @@ public static class ColourSearch
         return string.Join(", ", modifiedColors);
     }
 
+
+    /* ---------------SEARCH BY NAME--------------- */
+
     public static string[] NameToHexArray(string colorName)
+    {
+        // Get center color (index 2)
+        string centerHex = NameToHex(colorName);
+        var rgb = HexToRgb(centerHex);
+        var (h, s, l) = RgbToHsl(rgb.R, rgb.G, rgb.B);
+        
+        string[] hexArray = new string[5];
+        
+        hexArray[2] = centerHex;
+
+        // Min/Max Values
+        hexArray[0] = HslToHex(h, Math.Max(0, s - 0.2), Math.Max(0, l - 0.2));
+        hexArray[4] = HslToHex(h, Math.Min(1, s + 0.2), Math.Min(1, l + 0.2));
+
+        // Intermediate Values
+        hexArray[1] = InterpolateHex(hexArray[0], hexArray[2]);
+        hexArray[3] = InterpolateHex(hexArray[2], hexArray[4]);
+        
+        return hexArray;
+    }
+
+    public static string NameToHex(string colorName)
+    {
+        string[] parts = colorName
+            .ToLower()
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        
+        double hue = 0;
+        double saturation = 0.7;  // Default moderate saturation
+        double lightness = 0.5;   // Default medium lightness
+        
+        string baseColor = parts[^1];
+
+        // Handle indigo
+        if (baseColor == "indigo")
         {
-            // Get center color (index 2)
-            string centerHex = NameToHex(colorName);
-            var rgb = HexToRgb(centerHex);
-            var (h, s, l) = RgbToHsl(rgb.R, rgb.G, rgb.B);
-            
-            string[] hexArray = new string[5];
-            
-            hexArray[2] = centerHex;
-    
-            // Min/Max Values
-            hexArray[0] = HslToHex(h, Math.Max(0, s - 0.2), Math.Max(0, l - 0.2));
-            hexArray[4] = HslToHex(h, Math.Min(1, s + 0.2), Math.Min(1, l + 0.2));
-    
-            // Intermediate Values
-            hexArray[1] = InterpolateHex(hexArray[0], hexArray[2]);
-            hexArray[3] = InterpolateHex(hexArray[2], hexArray[4]);
-            
-            return hexArray;
+            baseColor = "purple";
+            parts = parts.Take(parts.Length - 1).Append("dark").Append(baseColor).ToArray();
+
         }
 
-        /* ---------------SEARCH BY NAME--------------- */
-        public static string NameToHex(string colorName)
+        // Handle violet
+        if (baseColor == "violet")
         {
-            string[] parts = colorName
-                .ToLower()
-                .Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            
-            double hue = 0;
-            double saturation = 0.7;  // Default moderate saturation
-            double lightness = 0.5;   // Default medium lightness
-            
-            string baseColor = parts[^1];
-            var colorRange = GetColorRange(baseColor);
-            hue = (colorRange.Start + colorRange.End) / 2;
-            
-            foreach (string modifier in parts.Take(parts.Length - 1))
+            baseColor = "magenta";
+            parts = parts.Take(parts.Length - 1).Append("pale").Append(baseColor).ToArray();
+
+        }
+
+        // Handle pink
+        if (baseColor == "pink")
+        {
+            baseColor = "red";
+            var hasLight = parts.Take(parts.Length - 1).Contains("light");
+            var hasDark = parts.Take(parts.Length - 1).Contains("dark");
+
+            if (!hasLight && !hasDark)
             {
-                switch (modifier)
-                {
-                    case "light":
-                        lightness = 0.7;
-                        break;
-                    case "dark":
-                        lightness = 0.3;
-                        break;
-                    case "reddish":
-                        hue = AdjustHueTowards(hue, 0);
-                        break;
-                    case "greenish":
-                        hue = AdjustHueTowards(hue, 120);
-                        break;
-                    case "blueish":
-                        hue = AdjustHueTowards(hue, 240);
-                        break;
-                }
+                parts = parts.Take(parts.Length - 1)
+                    .Append("light")
+                    .Append(baseColor)
+                    .ToArray();
             }
-            
-            return HslToHex(hue, saturation, lightness);
-        }
-    
-        private static (double Start, double End) GetColorRange(string colorName)
-        {
-            Dictionary<string, (double Start, double End)> colorRanges = new()
+            else if (hasLight)
             {
-                {"red", (345, 15)},
-                {"orange", (15, 45)},
-                {"yellow", (45, 75)},
-                {"green", (75, 165)},
-                {"cyan", (165, 195)},
-                {"blue", (195, 255)},
-                {"purple", (255, 285)},
-                {"magenta", (285, 345)}
-            };
-    
-            if (!colorRanges.ContainsKey(colorName))
-                throw new ArgumentException($"Unknown color name: {colorName}");
-    
-            return colorRanges[colorName];
+                parts = parts.Take(parts.Length - 1)
+                    .Append("light")
+                    .Append(baseColor)
+                    .ToArray();
+            }
+            else if (hasDark)
+            {
+
+                parts = parts.Take(parts.Length - 1).Append(baseColor).ToArray();
+            }
         }
-    
-        private static double AdjustHueTowards(double currentHue, double targetHue)
+        
+        // Handle brown
+        if (baseColor == "brown")
         {
-            // Calculate both clockwise and counterclockwise distances
-            double diff = (targetHue - currentHue + 360) % 360;
-            double distance = Math.Min(diff, 360 - diff);
-            
-            // Move 20% of the way towards the target
-            return (currentHue + (distance * 0.2)) % 360;
-        }
-    
-        private static string HslToHex(double h, double s, double l)
-        {
-            // First convert HSL to RGB
-            double c = (1 - Math.Abs(2 * l - 1)) * s;
-            double x = c * (1 - Math.Abs((h / 60) % 2 - 1));
-            double m = l - c / 2;
-    
-            double r, g, b;
-    
-            if (h < 60) { r = c; g = x; b = 0; }
-            else if (h < 120) { r = x; g = c; b = 0; }
-            else if (h < 180) { r = 0; g = c; b = x; }
-            else if (h < 240) { r = 0; g = x; b = c; }
-            else if (h < 300) { r = x; g = 0; b = c; }
-            else { r = c; g = 0; b = x; }
-    
-            // Convert to hex
-            return String.Format("{0:X2}{1:X2}{2:X2}",
-                (int)((r + m) * 255),
-                (int)((g + m) * 255),
-                (int)((b + m) * 255)
-            );
+            baseColor = "orange";
+            var hasLight = parts.Take(parts.Length - 1).Contains("light");
+            var hasDark = parts.Take(parts.Length - 1).Contains("dark");
+
+            if (!hasLight && !hasDark)
+            {
+                parts = parts.Take(parts.Length - 1).Append("dark").Append(baseColor).ToArray();
+            }
+            else if (hasLight)
+            {
+                parts = parts.Take(parts.Length - 1)
+                    .Where(p => p != "light")
+                    .Append(baseColor)
+                    .ToArray();
+            }
+            else if (hasDark)
+            {
+                parts = parts.Take(parts.Length - 1)
+                    .Append("dark")
+                    .Append(baseColor)
+                    .ToArray();
+            }
         }
 
-        private static string InterpolateHex(string hex1, string hex2)
+        var colorRange = GetColorRange(baseColor);
+        hue = colorRange.Start > colorRange.End
+            ? (colorRange.Start + (360 - colorRange.Start + colorRange.End) / 2) % 360
+            : (colorRange.Start + colorRange.End) / 2;
+        
+        foreach (string modifier in parts.Take(parts.Length - 1))
         {
-            var (r1, g1, b1) = HexToRgb(hex1);
-            var (r2, g2, b2) = HexToRgb(hex2);
-
-            // Calculate the average RGB values
-            int r = (r1 + r2) / 2;
-            int g = (g1 + g2) / 2;
-            int b = (b1 + b2) / 2;
-
-            // Convert back to hex
-            return String.Format("{0:X2}{1:X2}{2:X2}", r, g, b);
+            switch (modifier)
+            {
+                case "light":
+                    lightness += 0.1;
+                    if (lightness == 1) lightness = 0.95;
+                    break;
+                case "dark":
+                    lightness -= 0.1;
+                    if (lightness == 0) lightness = 0.05;
+                    break;
+                case "pale":
+                    saturation -= 0.2;
+                    break;
+                case "bold":
+                    saturation += 0.2;
+                    break;
+                case "reddish":
+                    hue = AdjustHueTowards(hue, 0);
+                    break;
+                case "orangeish":
+                    hue = AdjustHueTowards(hue, 30);
+                    break;
+                case "yellowish":
+                    hue = AdjustHueTowards(hue, 60);
+                    break;
+                case "greenish":
+                    hue = AdjustHueTowards(hue, 120);
+                    break;
+                case "cyanish":
+                    hue = AdjustHueTowards(hue, 180);
+                    break;
+                case "blueish":
+                    hue = AdjustHueTowards(hue, 240);
+                    break;
+                case "purpleish":
+                    hue = AdjustHueTowards(hue, 270);
+                    break;
+                case "magentaish":
+                    hue = AdjustHueTowards(hue, 330);
+                    break;
+                case "violetish":
+                    hue = AdjustHueTowards(hue, 330);
+                    lightness = Math.Min(1, lightness + 0.1);
+                    break;
+                case "brownish":
+                    hue = AdjustHueTowards(hue, 30);
+                    lightness = Math.Max(0, lightness - 0.1);
+                    saturation = Math.Min(1, saturation + 0.1);
+                    break;
+                case "pinkish":
+                    hue = AdjustHueTowards(hue, 0);
+                    lightness = Math.Min(1, lightness + 0.1);
+                    saturation = Math.Max(0, saturation - 0.1);
+                    break;
+                case "indigoish":
+                    hue = AdjustHueTowards(hue, 270);
+                    lightness = Math.Max(0, lightness - 0.1);
+                    break;
+            }
         }
+        
+        return HslToHex(hue, saturation, lightness);
+    }
+
+    private static (double Start, double End) GetColorRange(string colorName)
+    {
+        Dictionary<string, (double Start, double End)> colorRanges = new()
+        {
+            {"red", (345, 15)},
+            {"orange", (15, 45)},
+            {"yellow", (45, 75)},
+            {"green", (75, 165)},
+            {"cyan", (165, 195)},
+            {"blue", (195, 255)},
+            {"purple", (255, 285)},
+            {"magenta", (285, 345)}
+        };
+
+        if (!colorRanges.ContainsKey(colorName))
+            throw new ArgumentException($"Unknown color name: {colorName}");
+
+        return colorRanges[colorName];
+    }
+
+    private static double AdjustHueTowards(double currentHue, double targetHue)
+    {
+        // Calculate both clockwise and counterclockwise distances
+        double diff = (targetHue - currentHue + 360) % 360;
+        double distance = Math.Min(diff, 360 - diff);
+        
+        // Move 20% of the way towards the target
+        return (currentHue + (distance * 0.2)) % 360;
+    }
+
+    private static string HslToHex(double h, double s, double l)
+    {
+        // First convert HSL to RGB
+        double c = (1 - Math.Abs(2 * l - 1)) * s;
+        double x = c * (1 - Math.Abs((h / 60) % 2 - 1));
+        double m = l - c / 2;
+
+        double r, g, b;
+
+        if (h < 60) { r = c; g = x; b = 0; }
+        else if (h < 120) { r = x; g = c; b = 0; }
+        else if (h < 180) { r = 0; g = c; b = x; }
+        else if (h < 240) { r = 0; g = x; b = c; }
+        else if (h < 300) { r = x; g = 0; b = c; }
+        else { r = c; g = 0; b = x; }
+
+        // Convert to hex
+        return String.Format("{0:X2}{1:X2}{2:X2}",
+            (int)((r + m) * 255),
+            (int)((g + m) * 255),
+            (int)((b + m) * 255)
+        );
+    }
+
+    private static string InterpolateHex(string hex1, string hex2)
+    {
+        var (r1, g1, b1) = HexToRgb(hex1);
+        var (r2, g2, b2) = HexToRgb(hex2);
+
+        // Calculate the average RGB values
+        int r = (r1 + r2) / 2;
+        int g = (g1 + g2) / 2;
+        int b = (b1 + b2) / 2;
+
+        // Convert back to hex
+        return String.Format("{0:X2}{1:X2}{2:X2}", r, g, b);
+    }
 }
